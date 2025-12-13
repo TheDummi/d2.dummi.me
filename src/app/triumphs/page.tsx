@@ -3,11 +3,14 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
+import { redirect } from 'next/navigation';
 import triumphFormatter from '../../../public/functions/triumphFormatter';
 import { useSession } from 'next-auth/react';
 
 export default function Home() {
 	const { data: session } = useSession() as unknown as Record<string, any>;
+
+	if (!session) redirect('/api/auth/signin');
 
 	const [manifest, setManifest] = useState<Record<string, any> | null>(null);
 	const [fireteam, setFireteam] = useState<any[]>([]);

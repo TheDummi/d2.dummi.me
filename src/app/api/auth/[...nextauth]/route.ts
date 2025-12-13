@@ -82,6 +82,7 @@ export const authOptions: AuthOptions = {
 			session.membershipId = token.membershipId;
 			session.manifest = manifest;
 			session.accessToken = token.accessToken;
+			session.user = memberships.bungieNetUser;
 			session = { ...session, ...user };
 
 			return session;

@@ -416,140 +416,469 @@
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3560923614": {
 		"hasTitle": true,
 		"required": false,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"518342793": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3834307795": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3875695735": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3200831458": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"513707022": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3630249365": {
 		"hasTitle": true,
 		"required": false,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"564366615": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"134885948": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3323713181": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"992355976": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"22094034": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"4216504853": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"64856166": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"3771160417": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"337542929": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"1277450448": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"2530940166": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
 		}
 	},
 	"1487317889": {
 		"hasTitle": true,
 		"required": true,
 		"titlesByGender": {
-			"Male": "Deep Stone Crypt"
+			"Male": "Descendant"
+		}
+	},
+	"2782679117": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"3114569402": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"2750088202": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"578313932": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"932039090": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"991121189": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"1983700615": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"2592913942": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"1961032859": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"2821192338": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"2045104041": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"3969659747": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"874956966": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"706596766": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"4170123161": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"787552349": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"1888851130": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"154213552": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"3903615031": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"1803186219": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"2464700601": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"3106039192": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"1129667036": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"1024875083": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"3890225317": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"3790077074": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"133832942": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Fatebreaker"
+		}
+	},
+	"2949079885": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"1363459558": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"860708386": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"1726056119": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"1336410330": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"798400497": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"2379995968": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"3725180136": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"3759075039": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"3932088927": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"1121652081": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Splintered"
+		}
+	},
+	"2206124374": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"572729504": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"903856480": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"1965921084": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"armyofone": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"half-banked": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"thrillmonger": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"2467484432": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
+		}
+	},
+	"579515765": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Dredgen"
 		}
 	}
 }

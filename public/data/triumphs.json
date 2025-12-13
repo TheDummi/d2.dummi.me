@@ -1,222 +1,555 @@
 {
-	"1418003": {
-		"collection": "Neomuna",
-		"type": "Triumph",
-		"title": "Virtual Fighter"
+	"1384029371": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"4009562": {
-		"collection": "Europa",
-		"type": "Triumph",
-		"title": "Unleashed"
+	"2756328801": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"6245488": {
-		"collection": "Moon",
-		"type": "Triumph",
-		"title": null
+	"3000516033": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"7358862": {
-		"collection": "Moon",
-		"type": "Triumph",
-		"title": null
+	"1847670729": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"12116937": {
-		"collection": "The Pale Heart",
-		"type": "Triumph",
-		"title": null
+	"4078980921": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"14913506": {
-		"collection": "Neomuna",
-		"type": "Triumph",
-		"title": null
+	"342038729": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"15917031": {
-		"collection": "Catalyst",
-		"type": "Catalyst",
-		"title": null
+	"3533973498": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"17045790": {
-		"collection": "Craftable",
-		"type": "Craftable",
-		"title": null
+	"3448775736": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"22094034": {
-		"collection": "Europa",
-		"type": "Triumph",
-		"title": "Descendant"
+	"1711136422": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
 	},
-	"22095468": {
-		"collection": "Craftable",
-		"type": "Craftable",
-		"title": null
+	"380332968": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"3234595894": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"623283604": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"2826160801": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"989244596": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"717856991": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"1359055399": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"628370196": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"2588923804": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"4120799163": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Rivensbane"
+		}
+	},
+	"2416350118": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"2575563053": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"1948649027": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"1948649026": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"1948649025": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"2311966070": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"1025573696": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"2680793994": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"3484341438": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
+	},
+	"4175199845": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
 	},
 	"23458534": {
-		"collection": "The Dreaming City",
-		"type": "Triumph",
-		"title": "Cursebreaker"
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Cursebreaker"
+		}
 	},
-	"23859304": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"3804486505": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"23859306": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"1221037312": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"23859307": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"1922270325": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"28801233": {
-		"collection": "Craftable",
-		"type": "Craftable",
-		"title": null
+	"3427328428": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"31076871": {
-		"collection": "Neomuna",
-		"type": "Triumph",
-		"title": "Dreamwarrior"
+	"277137394": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"32601779": {
-		"collection": "Neomuna",
-		"type": "Triumph",
-		"title": null
+	"2571794337": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"2629178011": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"2010125540": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"1830799772": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"1522774125": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"521675034": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"3719309782": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"4105510833": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
+	},
+	"637935773": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
 	"44547560": {
-		"collection": "Moon",
-		"type": "Triumph",
-		"title": "Enlightened"
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"50288594": {
-		"collection": "Heavy Metal",
-		"type": "Triumph",
-		"title": "Heavy Metal"
+	"2381358572": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"50745936": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"3860668859": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"52324766": {
-		"collection": "Iron Banner",
-		"type": "Triumph",
-		"title": null
+	"2191554152": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"52483109": {
-		"collection": "Quest",
-		"type": "Quest",
-		"title": null
+	"3949104239": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Enlightened"
+		}
 	},
-	"53215958": {
-		"collection": "Moon",
-		"type": "Triumph",
-		"title": null
+	"351867733": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"59745629": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"655286676": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"64856166": {
-		"collection": "Europa",
-		"type": "Triumph",
-		"title": "Descendant"
+	"425791511": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"65210472": {
-		"collection": "The Pale Heart",
-		"type": "Triumph",
-		"title": null
+	"3391758361": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"67523523": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"2508342955": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"70932677": {
-		"collection": "King's Fall",
-		"type": "Triumph",
-		"title": "Kingslayer"
+	"245952203": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"73042000": {
-		"collection": "Craftable",
-		"type": "Craftable",
-		"title": null
+	"3841336511": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"89246831": {
-		"collection": "Vidmaster",
-		"type": "Triumph",
-		"title": "Vidmaster"
+	"3703101157": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"96042291": {
-		"collection": "Craftable",
-		"type": "Craftable",
-		"title": null
+	"2202038969": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"104393912": {
-		"collection": "The Pale Heart",
-		"type": "Triumph",
-		"title": "Transcendant"
+	"1627455393": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Harbinger"
+		}
 	},
-	"114953849": {
-		"collection": "Moon",
-		"type": "Triumph",
-		"title": null
+	"3185876102": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"117380835": {
-		"collection": "The Pale Heart",
-		"type": "Triumph",
-		"title": "Transcendant"
+	"3560923614": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"122232331": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"518342793": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"122415725": {
-		"collection": "Craftable",
-		"type": "Craftable",
-		"title": null
+	"3834307795": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"124487406": {
-		"collection": "Neomuna",
-		"type": "Triumph",
-		"title": null
+	"3875695735": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"124804105": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"3200831458": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"125012719": {
-		"collection": "The Dreaming City",
-		"type": "Triumph",
-		"title": null
+	"513707022": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"125435091": {
-		"collection": "Medal",
-		"type": "Medal",
-		"title": null
+	"3630249365": {
+		"hasTitle": true,
+		"required": false,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"131593566": {
-		"collection": "Red War",
-		"type": "Triumph",
-		"title": null
-	},
-	"131896889": {
-		"collection": "Cosmodrome",
-		"type": "Triumph",
-		"title": "WrathBearer"
+	"564366615": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
 	"134885948": {
-		"collection": "Europa",
-		"type": "Triumph",
-		"title": "Descendant"
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	},
-	"145839363": {
-		"collection": "Neomuna",
-		"type": "Triumph",
-		"title": null
+	"3323713181": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"992355976": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"22094034": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"4216504853": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"64856166": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"3771160417": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"337542929": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"1277450448": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"2530940166": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
+	},
+	"1487317889": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deep Stone Crypt"
+		}
 	}
 }

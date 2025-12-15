@@ -880,5 +880,705 @@
 		"titlesByGender": {
 			"Male": "Dredgen"
 		}
+	},
+	"4018593209": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Conqueror"
+		}
+	},
+	"963801201": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Conqueror"
+		}
+	},
+	"3110109247": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Conqueror"
+		}
+	},
+	"1268432769": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Conqueror"
+		}
+	},
+	"4143892469": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Conqueror"
+		}
+	},
+	"2502902092": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flawless"
+		}
+	},
+	"11715693": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flawless"
+		}
+	},
+	"3064133018": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flawless"
+		}
+	},
+	"1522246467": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flawless"
+		}
+	},
+	"1662916867": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flawless"
+		}
+	},
+	"832436622": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3387118902": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"4107780895": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3364492516": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"349070628": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"4272358785": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3100783191": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"4235993550": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3525486243": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"2604627899": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"792778666": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3937029060": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"4024183569": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"1179865227": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3679329876": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"1132038861": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"1769958277": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3075680071": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"1935170022": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"1031991362": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"215660405": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"4084330680": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3962250723": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3757110937": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"2406724529": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"2707477076": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"3770927290": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"2031838581": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"993949190": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Deadeye"
+		}
+	},
+	"1044381150": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"3200086269": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"3144435509": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"1564865293": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"89246831": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"537523115": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"3193814626": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"4001408878": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"4233323731": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"1770021330": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Vidmaster"
+		}
+	},
+	"1729647218": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"2168422218": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"610864524": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"3330343477": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"2383291155": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"1053120087": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"3620246150": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"4241035147": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"1682546621": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"1673084356": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"146328065": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"1959737632": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"2006434999": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"1120467498": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"990479197": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"801186532": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"3991904123": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"3950568572": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"486676807": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"1006785931": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Disciple-Slayer"
+		}
+	},
+	"531928770": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"326379752": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"1585342602": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"3444043369": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"801645632": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"284821378": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"2848107062": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"1845356175": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Gumshoe"
+		}
+	},
+	"3052275480": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Iron Lord"
+		}
+	},
+	"1624127464": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Iron Lord"
+		}
+	},
+	"3642623255": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Iron Lord"
+		}
+	},
+	"1031853948": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Iron Lord"
+		}
+	},
+	"2105786548": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"1350388308": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"755549938": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"196842574": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"911294620": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"3475888069": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"2388189655": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"3952021245": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"1864837600": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"1801613309": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"3200960029": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Discerptor"
+		}
+	},
+	"1498554716": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"254252205": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"1807249311": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"4082510051": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"380312357": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"1163569125": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"1447567817": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
+	},
+	"4067313462": {
+		"hasTitle": true,
+		"required": true,
+		"titlesByGender": {
+			"Male": "Flamekeeper"
+		}
 	}
 }

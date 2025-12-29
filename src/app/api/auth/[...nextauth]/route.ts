@@ -68,22 +68,30 @@ export const authOptions: AuthOptions = {
 		async session({ session, token }: { session: Record<string, string>; token: Record<string, string> }) {
 			const memberships = await bungieFetch('/User/GetMembershipsForCurrentUser', token.accessToken);
 			const user = await bungieFetch(
-				`/Destiny2/${memberships.destinyMemberships?.find((m: any) => m.membershipId === memberships.primaryMembershipId)?.membershipType}/Profile/${
-					memberships.primaryMembershipId
-				}?components=100,900,1000`,
+				`/Destiny2/${memberships?.destinyMemberships?.find((m: any) => m.membershipId === memberships?.primaryMembershipId)?.membershipType}/Profile/${
+					memberships?.primaryMembershipId
+				}?components=100,102,103,200,201,203,204,205,900,1000`,
 				token.accessToken
 			);
 			const friends = await bungieFetch('/Social/Friends/', token.accessToken);
 			const manifest = await bungieFetch('/Destiny2/Manifest/', token.accessToken);
+			const character =
+				user?.characters?.data &&
+				Object.entries(user?.characters?.data)
+					.sort(([, a]: any, [, b]: any) => new Date(b.dateLastPlayed).getTime() - new Date(a.dateLastPlayed).getTime())
+					.map(([id, data]: any) => ({ characterId: id, ...data }))[0];
 
 			session.memberships = memberships;
-			session.friends = friends.friends;
-			session.membershipType = memberships.destinyMemberships?.find((m: any) => m.membershipId === memberships.primaryMembershipId)?.membershipType;
+			session.friends = friends?.friends;
+			session.membershipType = memberships?.destinyMemberships?.find((m: any) => m.membershipId === memberships?.primaryMembershipId)?.membershipType;
 			session.membershipId = token.membershipId;
 			session.manifest = manifest;
 			session.accessToken = token.accessToken;
-			session.user = memberships.bungieNetUser;
+			session.user = memberships?.bungieNetUser;
+			session.character = character;
 			session = { ...session, ...user };
+
+			if (!session.user) return null;
 
 			return session;
 		},

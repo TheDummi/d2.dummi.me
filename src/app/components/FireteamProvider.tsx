@@ -25,7 +25,12 @@ export function FireteamProvider({ children }: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		if (!session?.profileTransitoryData?.data?.partyMembers) {
-			setFireteam([]);
+			setFireteam([
+				{
+					profile: session,
+					character: session.character,
+				},
+			]);
 			setLoading(false);
 			return;
 		}

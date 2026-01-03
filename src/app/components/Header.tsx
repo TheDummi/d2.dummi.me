@@ -153,7 +153,7 @@ export default function Header() {
 					</div>
 				</div>
 
-				{activity && !fireteamLoading && !!fireteam.length && (
+				{activity && !fireteamLoading && session?.profileTransitoryData?.data?.partyMembers && (
 					<div
 						className='relative px-6 py-3 text-sm flex items-center bg-cover bg-center'
 						style={{
@@ -173,9 +173,9 @@ export default function Header() {
 							{fireteam.map((member, i) => {
 								const user = member.profile?.profile?.data?.userInfo;
 
-								const bg = member.character?.emblemBackgroundPath ? `https://bungie.net${member.character.emblemBackgroundPath}` : undefined;
+								const bg = member?.character?.emblemBackgroundPath ? `https://bungie.net${member.character.emblemBackgroundPath}` : undefined;
 
-								const ico = member.character?.emblemPath ? `https://bungie.net${member.character.emblemPath}` : undefined;
+								const ico = member?.character?.emblemPath ? `https://bungie.net${member.character.emblemPath}` : undefined;
 
 								return (
 									<div key={i} className='relative rounded-full overflow-hidden'>

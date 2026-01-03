@@ -28,7 +28,7 @@ export function FireteamProvider({ children }: { children: React.ReactNode }) {
 			setFireteam([
 				{
 					profile: session,
-					character: session.character,
+					character: session?.character,
 				},
 			]);
 			setLoading(false);
@@ -46,7 +46,7 @@ export function FireteamProvider({ children }: { children: React.ReactNode }) {
 				if (member.membershipId === session.character?.membershipId) {
 					team.push({
 						profile: session,
-						character: session.character,
+						character: session?.character,
 					});
 					continue;
 				}

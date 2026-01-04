@@ -14,7 +14,7 @@ type FriendCharacterMap = Record<string, any>;
 export default function Header() {
 	const { data: session } = useSession() as unknown as Record<string, any>;
 	const { activeCharacterId, setActiveCharacterId } = useCharacter();
-	const { fireteam, loading: fireteamLoading } = useFireteam();
+	const { fireteam, loading: fireteamLoading, refreshing } = useFireteam();
 
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [offlineOpen, setOfflineOpen] = useState(false);
@@ -25,11 +25,20 @@ export default function Header() {
 	const [onlineFriends, setOnlineFriends] = useState<any[]>([]);
 	const [offlineFriends, setOfflineFriends] = useState<any[]>([]);
 	const [friendCharacters, setFriendCharacters] = useState<FriendCharacterMap>({});
+
 	const [activity, setActivity] = useState<any>(null);
+	const [refreshVisual, setRefreshVisual] = useState<'idle' | 'spin'>('idle');
+	const [refreshCycle, setRefreshCycle] = useState(0);
+	const [lastRefreshAt, setLastRefreshAt] = useState<number>(Date.now());
+	const [now, setNow] = useState(Date.now());
 
 	const router = useRouter();
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+
+	const REFRESH_INTERVAL = 60_000;
+
+	const secondsUntilRefresh = Math.max(0, Math.ceil((lastRefreshAt + REFRESH_INTERVAL - now) / 1000));
 
 	/* -------------------- Characters -------------------- */
 	const characters = session?.characters?.data ?? {};
@@ -38,6 +47,32 @@ export default function Header() {
 	const selectedCharId = searchParams.get('character') || session?.character?.characterId || fallbackCharId;
 
 	const selectedCharacter = characters[selectedCharId] || characters[session?.character?.characterId];
+
+	useEffect(() => {
+		if (refreshing) return;
+
+		const t = setInterval(() => {
+			setNow(Date.now());
+		}, 1000);
+
+		return () => clearInterval(t);
+	}, [refreshing]);
+
+	useEffect(() => {
+		if (refreshing) {
+			setRefreshVisual('spin');
+			return;
+		}
+
+		// refresh just finished
+		const t = setTimeout(() => {
+			setRefreshVisual('idle');
+			setLastRefreshAt(Date.now());
+			setRefreshCycle((c) => c + 1);
+		}, 300);
+
+		return () => clearTimeout(t);
+	}, [refreshing]);
 
 	/* -------------------- Activity -------------------- */
 	useEffect(() => {
@@ -152,49 +187,92 @@ export default function Header() {
 						</a>
 					</div>
 				</div>
+				<AnimatePresence initial={false}>
+					{activity && !fireteamLoading && session?.profileTransitoryData?.data?.partyMembers && (
+						<motion.div
+							layout
+							initial={{ opacity: 0, y: -8 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: -8 }}
+							transition={{ duration: 0.25, ease: 'easeOut' }}
+							className='relative px-6 py-3 text-sm flex items-center bg-cover bg-center'
+							style={{
+								backgroundImage: activity.pgcrImage ? `url(https://bungie.net${activity.pgcrImage})` : undefined,
+							}}>
+							{/* background overlay */}
+							<div className='absolute inset-0 bg-neutral-900/70 backdrop-blur-[2px]' />
 
-				{activity && !fireteamLoading && session?.profileTransitoryData?.data?.partyMembers && (
-					<div
-						className='relative px-6 py-3 text-sm flex items-center bg-cover bg-center'
-						style={{
-							backgroundImage: activity.pgcrImage ? `url(https://bungie.net${activity.pgcrImage})` : undefined,
-						}}>
-						{/* background overlay */}
-						<div className='absolute inset-0 bg-neutral-900/70 backdrop-blur-[2px]' />
+							{/* activity (centered) */}
+							<div className='relative z-10 flex items-center gap-2 mx-auto'>
+								<img src={`https://bungie.net${activity.displayProperties.icon}`} className='h-6 w-6' />
+								<span className='font-medium text-white drop-shadow'>{activity.displayProperties.name || 'Orbit'}</span>
+							</div>
 
-						{/* activity (centered) */}
-						<div className='relative z-10 flex items-center gap-2 mx-auto'>
-							<img src={`https://bungie.net${activity.displayProperties.icon}`} className='h-6 w-6' />
-							<span className='font-medium text-white drop-shadow'>{activity.displayProperties.name || 'Orbit'}</span>
-						</div>
+							{/* fireteam (right aligned) */}
+							<div className='relative z-10 ml-auto flex items-center gap-3'>
+								{fireteam.map((member, i) => {
+									const user = member.profile?.profile?.data?.userInfo;
 
-						{/* fireteam (right aligned) */}
-						<div className='relative z-10 ml-auto flex items-center gap-3'>
-							{fireteam.map((member, i) => {
-								const user = member.profile?.profile?.data?.userInfo;
+									const bg = member?.character?.emblemBackgroundPath ? `https://bungie.net${member.character.emblemBackgroundPath}` : undefined;
 
-								const bg = member?.character?.emblemBackgroundPath ? `https://bungie.net${member.character.emblemBackgroundPath}` : undefined;
+									const ico = member?.character?.emblemPath ? `https://bungie.net${member.character.emblemPath}` : undefined;
 
-								const ico = member?.character?.emblemPath ? `https://bungie.net${member.character.emblemPath}` : undefined;
+									return (
+										<div key={i} className='relative rounded-full overflow-hidden'>
+											{bg && <div className='absolute inset-0 bg-cover bg-center opacity-30' style={{ backgroundImage: `url(${bg})` }} />}
 
-								return (
-									<div key={i} className='relative rounded-full overflow-hidden'>
-										{bg && <div className='absolute inset-0 bg-cover bg-center opacity-30' style={{ backgroundImage: `url(${bg})` }} />}
+											<div className='relative z-10 flex items-center gap-2 px-2 py-1 bg-neutral-800/70 backdrop-blur-sm border border-white/10'>
+												{ico ? <img src={ico} className='h-7 w-7 rounded-full border border-white/60' /> : <div className='h-7 w-7 rounded-full bg-neutral-700 animate-pulse' />}
 
-										<div className='relative z-10 flex items-center gap-2 px-2 py-1 bg-neutral-800/70 backdrop-blur-sm border border-white/10'>
-											{ico ? <img src={ico} className='h-7 w-7 rounded-full border border-white/60' /> : <div className='h-7 w-7 rounded-full bg-neutral-700 animate-pulse' />}
-
-											<div className='text-xs whitespace-nowrap text-white drop-shadow'>
-												{user?.bungieGlobalDisplayName}
-												<span className='text-neutral-300'>#{user?.bungieGlobalDisplayNameCode}</span>
+												<div className='text-xs whitespace-nowrap text-white drop-shadow'>
+													{user?.bungieGlobalDisplayName}
+													<span className='text-neutral-300'>#{user?.bungieGlobalDisplayNameCode}</span>
+												</div>
 											</div>
 										</div>
-									</div>
-								);
-							})}
-						</div>
-					</div>
-				)}
+									);
+								})}
+							</div>
+
+							<div className='relative z-10 flex items-center gap-2 pl-4' title={refreshing ? 'Updating fireteam…' : `Updating in ${secondsUntilRefresh}s`}>
+								<div className='relative w-5 h-5'>
+									<AnimatePresence mode='wait'>
+										{refreshVisual === 'idle' ? (
+											<motion.svg
+												key={`idle-${refreshCycle}`}
+												viewBox='0 0 36 36'
+												className='absolute inset-0 text-purple-400/70'
+												initial={{ opacity: 0, scale: 0.8 }}
+												animate={{ opacity: 1, scale: 1 }}
+												exit={{ opacity: 0, scale: 0.8 }}
+												style={
+													{
+														'--fill-duration': '60s',
+													} as React.CSSProperties
+												}>
+												<circle cx='18' cy='18' r='16' fill='none' stroke='currentColor' strokeWidth='2' strokeDasharray='100' strokeDashoffset='100' className='animate-circle-fill' />
+											</motion.svg>
+										) : (
+											<motion.svg
+												key='spin'
+												viewBox='0 0 24 24'
+												className='absolute inset-0 text-purple-400 animate-spin-slow'
+												fill='none'
+												stroke='currentColor'
+												strokeWidth='2'
+												initial={{ opacity: 0, scale: 0.8 }}
+												animate={{ opacity: 1, scale: 1 }}
+												exit={{ opacity: 0, scale: 0.8 }}>
+												<path d='M21 12a9 9 0 1 1-2.64-6.36' />
+												<polyline points='21 3 21 9 15 9' />
+											</motion.svg>
+										)}
+									</AnimatePresence>
+								</div>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
 			</header>
 
 			{/* SIDEBAR */}

@@ -10,7 +10,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ memb
 	const { membershipType, membershipId, components } = await params;
 	const session: any = await getServerSession(authOptions);
 
-	const data = await bungieFetch(`/Destiny2/${membershipType}/Profile/${membershipId}?components=${components}`, session.accessToken!).catch(() => null);
+	const data = await bungieFetch(`/Destiny2/${membershipType}/Profile/${membershipId}?components=${components}`, session.accessToken!);
 
 	return NextResponse.json(data);
 }

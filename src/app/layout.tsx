@@ -2,6 +2,7 @@
 
 import './globals.css';
 
+import AppShell from './components/AppShell';
 import { CharacterProvider } from './components/CharacterProvider';
 import { FireteamProvider } from './components/FireteamProvider';
 import Footer from './components/Footer';
@@ -78,11 +79,10 @@ export default async function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={``}>
-				<SessionProvider session={session}>
+				<SessionProvider session={session} refetchInterval={90}>
 					<CharacterProvider>
 						<FireteamProvider>
-							<Header />
-							{children}
+							<AppShell>{children}</AppShell>
 							<Footer />
 						</FireteamProvider>
 					</CharacterProvider>

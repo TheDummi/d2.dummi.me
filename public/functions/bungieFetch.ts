@@ -8,7 +8,7 @@ export default async function bungieFetch(endpoint: string, accessToken: string)
 		},
 	});
 
-	if (!response.ok) return;
+	if (!response.ok) return null;
 
 	const { Response } = await response.json();
 

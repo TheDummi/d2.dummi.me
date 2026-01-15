@@ -27,15 +27,6 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
-@keyframes circle-fill {
-	from {
-		stroke-dashoffset: 100;
-	}
-	to {
-		stroke-dashoffset: 0;
-	}
-}
-
 @keyframes circle-fill-90s {
 	from {
 		stroke-dashoffset: 100;

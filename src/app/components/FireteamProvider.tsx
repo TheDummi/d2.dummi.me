@@ -27,9 +27,10 @@ export function FireteamProvider({ children }: { children: React.ReactNode }) {
 	const [refreshing, setRefreshing] = useState(false);
 
 	const hasCache = useRef(false);
-
 	useEffect(() => {
 		if (!session) return;
+
+		setInterval(() => setRefreshing(true), 90000);
 
 		let cancelled = false;
 

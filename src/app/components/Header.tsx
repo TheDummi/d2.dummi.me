@@ -36,7 +36,7 @@ export default function Header() {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
 
-	const REFRESH_INTERVAL = 60_000;
+	const REFRESH_INTERVAL = 90_000;
 
 	const secondsUntilRefresh = Math.max(0, Math.ceil((lastRefreshAt + REFRESH_INTERVAL - now) / 1000));
 

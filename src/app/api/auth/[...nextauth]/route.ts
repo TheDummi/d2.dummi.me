@@ -3,6 +3,7 @@
 import NextAuth, { type AuthOptions } from 'next-auth';
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers/oauth';
 import bungieFetch from '../../../../../public/functions/bungieFetch';
+import { signOut } from 'next-auth/react';
 
 /**
  * Typed custom Bungie provider
@@ -59,8 +60,35 @@ export const authOptions: AuthOptions = {
 		async jwt({ token, account }) {
 			if (account) {
 				token.accessToken = account.access_token;
+				token.refreshToken = account.refresh_token;
+				token.valid = account.expires_at! * 1000 > Date.now();
 				token.membershipId = account.membership_id;
 			}
+
+			if (!token.valid) {
+				const response = await fetch('https://www.bungie.net/platform/app/oauth/token/', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: new URLSearchParams({
+						refresh_token: token.refreshToken! as string,
+						grant_type: 'refresh_token',
+						client_id: process.env.BUNGIE_ID!,
+						client_secret: process.env.BUNGIE_SECRET!,
+					}),
+				});
+
+				if (!response.ok) return token;
+
+				const account = await response.json();
+
+				token.accessToken = account.access_token;
+				token.refreshToken = account.refresh_token;
+				token.valid = account.expirationDate > Date.now();
+				token.membershipId = account.membership_id;
+			}
+
 			return token;
 		},
 

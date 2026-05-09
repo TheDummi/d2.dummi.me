@@ -171,7 +171,7 @@ export default function Header() {
 							href='/scrims'
 							className={
 								pathname === '/scrims'
-									? 'text-sm font-medium text-white underline underline-offset-4 decoration-emerald-400'
+									? 'text-sm font-medium text-white underline underline-offset-4 decoration-violet-500'
 									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
 							}>
 							Scrims
@@ -181,7 +181,7 @@ export default function Header() {
 							href='/triumphs'
 							className={
 								pathname === '/triumphs'
-									? 'text-sm font-medium text-white underline underline-offset-4 decoration-emerald-400'
+									? 'text-sm font-medium text-white underline underline-offset-4 decoration-violet-500'
 									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
 							}>
 							Triumphs
@@ -191,7 +191,7 @@ export default function Header() {
 							href='/vault'
 							className={
 								pathname === '/vault'
-									? 'text-sm font-medium text-white underline underline-offset-4 decoration-emerald-400'
+									? 'text-sm font-medium text-white underline underline-offset-4 decoration-violet-500'
 									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
 							}>
 							Vault

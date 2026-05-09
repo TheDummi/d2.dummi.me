@@ -301,6 +301,8 @@ function parseGuardian(member: any, definitions: any) {
 
 			name: subclassDef?.name || 'Unknown',
 
+			icon: subclassDef?.icon,
+
 			damageType: subclassDef?.name?.includes('Shadebinder')
 				? 'Stasis'
 				: subclassDef?.name?.includes('Revenant')
@@ -787,6 +789,7 @@ function validateTeam(team: any[], rules: any) {
 
 	return [...new Set(issues)];
 }
+
 function PlayerCard({ player, rules }: { player: any; rules: any }) {
 	const [open, setOpen] = useState(false);
 
@@ -865,19 +868,112 @@ function PlayerCard({ player, rules }: { player: any; rules: any }) {
 							</div>
 
 							<div className='mt-5 grid gap-3 text-sm'>
-								<div className='rounded-2xl bg-white/[0.03] border border-white/5 p-3'>
-									<div className='text-[10px] uppercase tracking-wider text-white/40 mb-1'>Subclass</div>
+								{/* Subclass */}
 
-									<div className='font-semibold'>{player.subclass?.name || 'Unknown'}</div>
+								<div className='rounded-3xl border border-white/10 bg-white/[0.03] overflow-hidden'>
+									{/* Header */}
+
+									<div className='p-4 border-b border-white/5'>
+										<div className='text-[10px] uppercase tracking-[0.25em] text-white/35 mb-4'>Subclass</div>
+
+										<div className='flex items-center gap-4'>
+											<div className='relative w-16 h-16 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shrink-0'>
+												{player.subclass?.icon ? (
+													<img src={`https://bungie.net${player.subclass.icon}`} alt={player.subclass.name} className='w-full h-full object-cover' />
+												) : (
+													<div className='w-full h-full flex items-center justify-center text-xs text-white/30'>?</div>
+												)}
+											</div>
+
+											<div className='min-w-0'>
+												<div className='text-lg font-bold truncate'>{player.subclass?.name || 'Unknown'}</div>
+
+												<div className='flex items-center gap-2 mt-1'>
+													<div className='px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-wider text-white/50'>{player.subclass?.damageType}</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									{/* Build */}
+
+									<div className='p-4'>
+										<div className='flex items-center justify-between mb-3'>
+											<div className='text-[10px] uppercase tracking-[0.25em] text-white/35'>Subclass Build</div>
+
+											<div className='text-[10px] text-white/25'>
+												{
+													[
+														player.subclassBuild.super,
+														player.subclassBuild.grenade,
+														player.subclassBuild.melee,
+														player.subclassBuild.classAbility,
+														...(player.subclassBuild.aspects || []),
+														...(player.subclassBuild.fragments || []),
+													].filter(Boolean).length
+												}{' '}
+												Equipped
+											</div>
+										</div>
+
+										<div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
+											{[
+												player.subclassBuild.super,
+												player.subclassBuild.grenade,
+												player.subclassBuild.melee,
+												player.subclassBuild.classAbility,
+												...(player.subclassBuild.aspects || []),
+												...(player.subclassBuild.fragments || []),
+											]
+												.filter(Boolean)
+												.map((item: any) => (
+													<div
+														key={`${item.hash}-${item.name}`}
+														className='group flex items-center gap-3 rounded-2xl bg-black/20 border border-white/5 p-2.5 hover:border-white/10 hover:bg-white/[0.03] transition-all'>
+														<div className='relative w-11 h-11 rounded-xl overflow-hidden bg-white/5 shrink-0 border border-white/10'>
+															{item.icon ? (
+																<img src={`https://bungie.net${item.icon}`} alt={item.name} className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105' />
+															) : (
+																<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
+															)}
+														</div>
+
+														<div className='min-w-0 flex-1'>
+															<div className='text-sm font-semibold truncate'>{item.name}</div>
+
+															<div className='text-[10px] uppercase tracking-wider text-white/35 truncate'>{item.type}</div>
+														</div>
+													</div>
+												))}
+										</div>
+									</div>
 								</div>
+
+								{/* Exotic Armor */}
 
 								{player.exoticArmor && (
 									<div className='rounded-2xl bg-yellow-500/10 border border-yellow-500/20 p-3'>
-										<div className='text-[10px] uppercase tracking-wider text-yellow-200/50 mb-1'>Exotic Armor</div>
+										<div className='text-[10px] uppercase tracking-wider text-yellow-200/50 mb-3'>Exotic Armor</div>
 
-										<div className='font-semibold text-yellow-300'>{player.exoticArmor.name}</div>
+										<div className='flex items-center gap-3'>
+											<div className='w-14 h-14 rounded-xl overflow-hidden bg-black/20 border border-yellow-500/20 shrink-0'>
+												{player.exoticArmor.icon ? (
+													<img src={`https://bungie.net${player.exoticArmor.icon}`} alt={player.exoticArmor.name} className='w-full h-full object-cover' />
+												) : (
+													<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
+												)}
+											</div>
+
+											<div>
+												<div className='font-semibold text-yellow-300'>{player.exoticArmor.name}</div>
+
+												<div className='text-xs text-yellow-200/50'>{player.exoticArmor.type}</div>
+											</div>
+										</div>
 									</div>
 								)}
+
+								{/* Abilities / Aspects / Fragments */}
 							</div>
 
 							<div className='mt-5'>
@@ -885,16 +981,24 @@ function PlayerCard({ player, rules }: { player: any; rules: any }) {
 
 								<div className='grid gap-2'>
 									{player.weapons.map((weapon: any) => (
-										<div key={weapon.itemInstanceId} className={`rounded-2xl border p-3 ${weapon.isExotic ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-white/[0.03] border-white/5'}`}>
-											<div className='flex items-center justify-between gap-3'>
-												<div>
-													<div className='font-semibold'>{weapon.name}</div>
+										<div className='flex items-center justify-between gap-3'>
+											<div className='flex items-center gap-3 min-w-0'>
+												<div className='w-12 h-12 rounded-xl overflow-hidden bg-white/5 shrink-0 border border-white/10'>
+													{weapon.icon ? (
+														<img src={`https://bungie.net${weapon.icon}`} alt={weapon.name} className='w-full h-full object-cover' />
+													) : (
+														<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
+													)}
+												</div>
+
+												<div className='min-w-0'>
+													<div className='font-semibold truncate'>{weapon.name}</div>
 
 													<div className='text-xs text-white/50'>{weapon.type}</div>
 												</div>
-
-												{weapon.isExotic && <div className='text-[10px] uppercase tracking-wider text-yellow-300'>Exotic</div>}
 											</div>
+
+											{weapon.isExotic && <div className='text-[10px] uppercase tracking-wider text-yellow-300 shrink-0'>Exotic</div>}
 										</div>
 									))}
 								</div>

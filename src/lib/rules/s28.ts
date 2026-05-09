@@ -64,6 +64,8 @@ export default {
 		"Nessa's Oblation",
 		'Phoneutria Fera',
 		'Sarpedon-D',
+		'First in, Last Out',
+		"Gunnora's Axe",
 	],
 
 	bannedMods: {

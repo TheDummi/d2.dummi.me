@@ -217,9 +217,9 @@ const STATS = {
 	health: 392767087,
 	melee: 4244567218,
 	grenade: 1735777505,
-	super: 1943323491,
+	super: 144602215,
 	weapons: 2996146975,
-	classAbility: 144602215,
+	classAbility: 1943323491,
 };
 
 function resolveItem(hash: number, definitions: any) {
@@ -856,13 +856,13 @@ function PlayerCard({ player, rules }: { player: any; rules: any }) {
 							<div className='grid grid-cols-2 gap-3'>
 								<Stat label='Health' value={player.stats.health} rules={rules} />
 
-								<Stat label='Melee' value={player.stats.melee} red={player.stats.melee > 50} rules={rules} />
+								<Stat label='Melee' value={player.stats.melee} red={player.stats.melee > rules.maxStats.melee} rules={rules} />
 
-								<Stat label='Grenade' value={player.stats.grenade} red={player.stats.grenade > 50} rules={rules} />
+								<Stat label='Grenade' value={player.stats.grenade} red={player.stats.grenade > rules.maxStats.grenade} rules={rules} />
 
-								<Stat label='Super' value={player.stats.super} red={player.stats.super > 50} rules={rules} />
+								<Stat label='Super' value={player.stats.super} red={player.stats.super > rules.maxStats.super} rules={rules} />
 
-								<Stat label='Weapons' value={player.stats.weapons} red={player.stats.weapons > 50} rules={rules} />
+								<Stat label='Weapons' value={player.stats.weapons} red={player.stats.weapons > rules.maxStats.weapons} rules={rules} />
 
 								<Stat label='Class' value={player.stats.classAbility} rules={rules} />
 							</div>

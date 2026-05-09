@@ -237,7 +237,7 @@ export default function Page() {
 						hash: '__NEARLY_DONE__',
 						name: 'Nearly Done',
 						records: nearlyDoneRecords,
-				  }
+					}
 				: null;
 
 		const rest = collections
@@ -252,7 +252,7 @@ export default function Page() {
 
 	if (loading || fireteamLoading)
 		return (
-			<div className='p-6 text-neutral-400'>
+			<div className='p-6 text-neutral-400 min-h-screen'>
 				<Loader />
 			</div>
 		);
@@ -345,8 +345,8 @@ export default function Page() {
 											targeted === r.hash
 												? 'border-purple-500 ring-4 ring-purple-500/40 shadow-[0_0_40px_rgba(139,92,246,0.6)] scale-[1.04]'
 												: highlightRecord === r.hash
-												? 'border-purple-500/60 ring-2 ring-purple-500/30'
-												: 'border-neutral-800 hover:border-neutral-700'
+													? 'border-purple-500/60 ring-2 ring-purple-500/30'
+													: 'border-neutral-800 hover:border-neutral-700'
 										}`}>
 										<div
 											className='p-4 flex gap-4 cursor-pointer'

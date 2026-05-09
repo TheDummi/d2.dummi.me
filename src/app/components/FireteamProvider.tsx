@@ -65,7 +65,7 @@ export function FireteamProvider({ children }: { children: React.ReactNode }) {
 
 					for (let i = 1; i <= 5; i++) {
 						try {
-							const res = await fetch(`/api/Destiny2/${i}/Profile/${member.membershipId}/100,200,205,900`).then((r) => (r.ok ? r.json() : null));
+							const res = await fetch(`/api/Destiny2/${i}/Profile/${member.membershipId}/100,102,103,200,201,203,204,205,304,305,900,1000`).then((r) => (r.ok ? r.json() : null));
 
 							if (res?.characters?.data) {
 								profile = res;

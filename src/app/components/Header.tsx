@@ -6,6 +6,7 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
+import Link from 'next/link';
 import { useCharacter } from '@/app/components/CharacterProvider';
 import { useFireteam } from '@/app/components/FireteamProvider';
 
@@ -166,7 +167,17 @@ export default function Header() {
 						</button>
 					)}
 					<div className='flex items-center gap-4'>
-						<a
+						<Link
+							href='/scrims'
+							className={
+								pathname === '/scrims'
+									? 'text-sm font-medium text-white underline underline-offset-4 decoration-emerald-400'
+									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
+							}>
+							Scrims
+						</Link>
+
+						<Link
 							href='/triumphs'
 							className={
 								pathname === '/triumphs'
@@ -174,9 +185,9 @@ export default function Header() {
 									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
 							}>
 							Triumphs
-						</a>
+						</Link>
 
-						<a
+						<Link
 							href='/vault'
 							className={
 								pathname === '/vault'
@@ -184,7 +195,7 @@ export default function Header() {
 									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
 							}>
 							Vault
-						</a>
+						</Link>
 					</div>
 				</div>
 				<AnimatePresence initial={false}>

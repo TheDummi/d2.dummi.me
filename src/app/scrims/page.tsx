@@ -1,0 +1,1248 @@
+/** @format */
+'use client';
+
+import { Activity, AlertTriangle, ChevronDown, Eye, Shield, ShieldOff, Swords, Timer, Trophy, Users } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { signIn, useSession } from 'next-auth/react';
+import { useEffect, useMemo, useState } from 'react';
+
+import { useFireteam } from '../components/FireteamProvider';
+
+export default function Page() {
+	const { data: session } = useSession() as any;
+
+	if (!session) {
+		signIn();
+		return <div className='min-h-screen bg-black flex items-center justify-center text-white'>Authenticating...</div>;
+	}
+
+	const { fireteam, loading } = useFireteam();
+
+	const [definitions, setDefinitions] = useState<any>({});
+
+	const [manifestLoading, setManifestLoading] = useState(true);
+	const [loadingMessage, setLoadingMessage] = useState('Loading Scrims...');
+
+	const [rules, setRules] = useState<any>(null);
+	const [rulesKey, setRulesKey] = useState<string>();
+	const [rulesets, setRulesets] = useState<any>({});
+	const [ruleSelector, setRuleSelector] = useState<Array<{ value: string; name: string }>>([]);
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const rulesets = await fetch('/api/rules').then((r) => r.json());
+
+				const sets = Object.entries(rulesets).map(([key, value]: any) => ({ value: key, name: value.season }));
+
+				setRulesets(rulesets);
+				setRuleSelector(sets);
+
+				const key = Object.keys(rulesets)[Object.keys(rulesets).length - 1];
+
+				setRulesKey(key);
+
+				setRules(rulesets[key]);
+
+				const urls = [
+					'DestinyInventoryItemDefinition',
+					'DestinyStatDefinition',
+					'DestinyDamageTypeDefinition',
+					'DestinyInventoryBucketDefinition',
+					'DestinySocketTypeDefinition',
+					'DestinyPlugSetDefinition',
+					'DestinySandboxPerkDefinition',
+				];
+
+				const responses = await Promise.all(
+					urls.map(async (name) => {
+						setLoadingMessage(`Loading ${name}...`);
+
+						const res = await fetch(`/api/Manifest/jsonWorldComponentContentPaths/en/${name}`);
+
+						if (!res.ok) {
+							throw new Error(`${name} failed: ${res.status}`);
+						}
+
+						const json = await res.json();
+
+						return [name, json];
+					})
+				);
+
+				const mapped = Object.fromEntries(responses);
+
+				setDefinitions({
+					items: mapped['DestinyInventoryItemDefinition'],
+
+					stats: mapped['DestinyStatDefinition'],
+
+					damage: mapped['DestinyDamageTypeDefinition'],
+
+					buckets: mapped['DestinyInventoryBucketDefinition'],
+
+					sockets: mapped['DestinySocketTypeDefinition'],
+
+					plugs: mapped['DestinyPlugSetDefinition'],
+
+					perks: mapped['DestinySandboxPerkDefinition'],
+				});
+			} catch (err) {
+				console.error('Manifest load failed:', err);
+			} finally {
+				setManifestLoading(false);
+			}
+		})();
+	}, []);
+
+	const players = useMemo(() => {
+		if (!definitions || !fireteam.length || !rules) return [];
+
+		return fireteam.map((member: any) => {
+			const parsed = parseGuardian(member, definitions);
+
+			return {
+				...parsed,
+				violations: validatePlayer(parsed, Math.floor(fireteam.length / 2), rules),
+			};
+		});
+	}, [fireteam, definitions, rules]);
+
+	const { alpha, bravo, spectators } = useMemo(() => {
+		return balanceTeams(players);
+	}, [players]);
+
+	if (loading || manifestLoading || !rules) {
+		return (
+			<div className='min-h-screen text-white flex items-center justify-center'>
+				<div className='text-white/60 animate-pulse'>{loadingMessage}</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className='min-h-screen text-white'>
+			<div className='max-w-7xl mx-auto px-6 py-10 '>
+				<div className='flex items-center gap-4 mb-8'>
+					<div className='p-4 rounded-3xl bg-white/5 border border-white/10'>
+						<Swords className='w-8 h-8' />
+					</div>
+
+					<div className='w-full'>
+						<div className='flex justify-between items-center gap-4 flex-wrap'>
+							<h1 className='text-5xl font-black tracking-tight'>Scrims</h1>
+
+							<div className='relative'>
+								<select
+									name=''
+									id=''
+									onChange={(e) => setRules(rulesets[e.target.value])}
+									className='appearance-none rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl px-5 py-3 pr-12 text-sm font-medium text-white outline-none transition hover:border-white/20 focus:border-blue-400/40 focus:ring-2 focus:ring-blue-400/10'>
+									{ruleSelector.map(({ value, name }) => (
+										<option key={value} value={value} className='bg-[#090909] text-white' selected={rulesKey == value}>
+											{name}
+										</option>
+									))}
+								</select>
+
+								<div className='pointer-events-none absolute inset-y-0 right-4 flex items-center text-white/40'>
+									<ChevronDown className='w-4 h-4' />
+								</div>
+							</div>
+						</div>
+
+						<p className='text-white/50'>Competitive Destiny. These are unofficial scrim rules, this is how we like to play. (if old user data loads like the wrong character, fly in to tower.)</p>
+					</div>
+				</div>
+				<div className='relative mb-10 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur-2xl'>
+					{/* Background glow */}
+
+					<div className='absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-red-500/10 pointer-events-none' />
+
+					<div className='relative grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 divide-y md:divide-y-0 md:divide-x divide-white/5'>
+						<Info icon={<Users className='w-5 h-5' />} label='Match' value={`${alpha.length}v${bravo.length}`} accent='blue' />
+
+						<Info icon={<Swords className='w-5 h-5' />} label='Mode' value='Clash' accent='red' />
+
+						<Info icon={<ShieldOff className='w-5 h-5' />} label='Power Ammo' value='Disabled' accent='yellow' />
+
+						<Info icon={<Timer className='w-5 h-5' />} label='Time' value='15 Minutes' accent='blue' />
+
+						<Info icon={<Activity className='w-5 h-5' />} label='Respawn' value='7 Seconds' accent='red' />
+
+						<Info icon={<Trophy className='w-5 h-5' />} label='Score' value={fireteam.length >= 8 ? '75' : '50'} accent='yellow' />
+					</div>
+				</div>
+				<div className='grid xl:grid-cols-2 gap-8'>
+					<TeamCard title='Alpha Team' players={alpha} issues={validateTeam(alpha, rules)} rules={rules} />
+
+					<TeamCard title='Bravo Team' players={bravo} issues={validateTeam(bravo, rules)} rules={rules} />
+				</div>
+				{!!spectators.length && (
+					<div className='mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-5'>
+						<div className='flex items-center gap-3 mb-5'>
+							<Eye className='w-5 h-5' />
+
+							<h2 className='text-2xl font-black'>Spectators</h2>
+						</div>
+
+						<div className='grid gap-5'>
+							{spectators.map((player: any) => (
+								<PlayerCard key={player.characterId} player={player} rules={rules} />
+							))}
+						</div>
+					</div>
+				)}
+				<BanList definitions={definitions} rules={rules} />
+			</div>
+		</div>
+	);
+}
+
+const BUCKETS = {
+	kinetic: 1498876634,
+	energy: 2465295065,
+	power: 953998645,
+
+	helmet: 3448274439,
+	gauntlets: 3551918588,
+	chest: 14239492,
+	legs: 20886954,
+	classItem: 1585787867,
+
+	subclass: 3284755031,
+};
+
+const STATS = {
+	health: 392767087,
+	melee: 4244567218,
+	grenade: 1735777505,
+	super: 1943323491,
+	weapons: 2996146975,
+	classAbility: 144602215,
+};
+
+function resolveItem(hash: number, definitions: any) {
+	const def = definitions.items?.[hash];
+
+	return {
+		hash,
+
+		name: def?.displayProperties?.name || 'Unknown',
+
+		icon: def?.displayProperties?.icon,
+
+		type: def?.itemTypeDisplayName || 'Unknown',
+
+		tier: def?.inventory?.tierTypeName || 'Unknown',
+
+		isExotic: def?.inventory?.tierTypeName === 'Exotic',
+
+		itemType: def?.itemType,
+
+		classType: def?.classType,
+
+		damageTypeHash: def?.defaultDamageTypeHash,
+
+		sockets: def?.sockets?.socketEntries || [],
+	};
+}
+
+function parseGuardian(member: any, definitions: any) {
+	const profile = member.profile.profile.data.userInfo;
+
+	const characters = member.profile.characters.data;
+
+	const equipment = member.profile.characterEquipment.data;
+
+	const parsedCharacters = Object.entries(equipment).map(([characterId, data]: any) => {
+		const character = characters[characterId];
+
+		const items = data.items.map((item: any) => ({
+			...item,
+
+			...resolveItem(item.itemHash, definitions),
+		}));
+
+		/* -------------------- WEAPONS -------------------- */
+
+		const weapons = items
+			.filter((x: any) => [BUCKETS.kinetic, BUCKETS.energy, BUCKETS.power].includes(x.bucketHash))
+			.map((weapon: any) => {
+				const socketData = member.profile.itemComponents?.sockets?.data?.[weapon.itemInstanceId];
+
+				const plugs =
+					socketData?.sockets
+						?.map((socket: any) => {
+							if (!socket.plugHash) return null;
+
+							return resolveItem(socket.plugHash, definitions);
+						})
+						.filter(Boolean) || [];
+
+				return {
+					...weapon,
+
+					plugs,
+				};
+			});
+
+		/* -------------------- ARMOR -------------------- */
+
+		const armor = items.filter((x: any) => [BUCKETS.helmet, BUCKETS.gauntlets, BUCKETS.chest, BUCKETS.legs, BUCKETS.classItem].includes(x.bucketHash));
+
+		/* -------------------- SUBCLASS -------------------- */
+		const subclassItem = items.find((item: any) => item.bucketHash === BUCKETS.subclass);
+
+		const subclassDef = resolveItem(subclassItem?.itemHash, definitions);
+
+		const subclass = {
+			hash: subclassItem?.itemHash,
+
+			name: subclassDef?.name || 'Unknown',
+
+			damageType: subclassDef?.name?.includes('Shadebinder')
+				? 'Stasis'
+				: subclassDef?.name?.includes('Revenant')
+					? 'Stasis'
+					: subclassDef?.name?.includes('Behemoth')
+						? 'Stasis'
+						: subclassDef?.name?.includes('Threadrunner')
+							? 'Strand'
+							: subclassDef?.name?.includes('Berserker')
+								? 'Strand'
+								: subclassDef?.name?.includes('Broodweaver')
+									? 'Strand'
+									: subclassDef?.name?.includes('Prismatic')
+										? 'Prismatic'
+										: 'Light',
+		};
+
+		const socketData = member.profile.itemComponents?.sockets?.data?.[subclassItem?.itemInstanceId];
+
+		const equippedPlugs =
+			socketData?.sockets
+				?.map((socket: any) => {
+					if (!socket.plugHash) return null;
+
+					return resolveItem(socket.plugHash, definitions);
+				})
+				.filter(Boolean) || [];
+
+		const subclassBuild = extractSubclassBuild(equippedPlugs);
+
+		/* -------------------- EXOTIC ARMOR -------------------- */
+
+		const exoticArmor = armor.find((x: any) => x.isExotic);
+
+		/* -------------------- RETURN -------------------- */
+
+		return {
+			characterId,
+
+			name: `${profile.bungieGlobalDisplayName}#${profile.bungieGlobalDisplayNameCode}`,
+
+			class: character.classType === 0 ? 'Titan' : character.classType === 1 ? 'Hunter' : 'Warlock',
+
+			emblem: `https://bungie.net/${character.emblemBackgroundPath}`,
+
+			weapons,
+
+			armor,
+
+			subclass,
+
+			subclassBuild,
+
+			exoticArmor,
+
+			stats: {
+				health: character.stats[STATS.health] || 0,
+
+				melee: character.stats[STATS.melee] || 0,
+
+				grenade: character.stats[STATS.grenade] || 0,
+
+				super: character.stats[STATS.super] || 0,
+
+				weapons: character.stats[STATS.weapons] || 0,
+
+				classAbility: character.stats[STATS.classAbility] || 0,
+			},
+		};
+	});
+
+	return parsedCharacters[0];
+}
+
+function validatePlayer(player: any, matchSize: number, rules: any) {
+	const violations: string[] = [];
+
+	// Stat limits
+
+	if (player.stats.melee > rules.maxStats.melee) {
+		violations.push(`Melee above ${rules.maxStats.melee}`);
+	}
+
+	if (player.stats.grenade > rules.maxStats.grenade) {
+		violations.push(`Grenade above ${rules.maxStats.grenade}`);
+	}
+
+	if (player.stats.super > rules.maxStats.super) {
+		violations.push(`Super above ${rules.maxStats.super}`);
+	}
+
+	if (player.stats.weapons > rules.maxStats.weapons) {
+		violations.push(`Weapons above ${rules.maxStats.weapons}`);
+	}
+
+	// Exotic armor bans
+
+	if (player.exoticArmor) {
+		const banned = rules.bannedExotics?.[player.class as 'Warlock' | 'Hunter' | 'Titan'] || [];
+
+		if (banned.includes(player.exoticArmor.name)) {
+			violations.push(`${player.exoticArmor.name} banned`);
+		}
+	}
+
+	// Subclass bans
+
+	if (player.subclass?.damageType && rules.bannedSubclasses.includes(player.subclass.damageType)) {
+		violations.push(`${player.subclass.damageType} subclass banned`);
+	}
+
+	// Weapon checks
+
+	for (const weapon of player.weapons) {
+		// Exact banned weapons
+
+		if (rules.bannedWeapons.includes(weapon.name)) {
+			violations.push(`${weapon.name} banned`);
+		}
+
+		// Archetype bans
+
+		if (rules.bannedTypes.includes(weapon.type)) {
+			violations.push(`${weapon.type} banned`);
+		}
+
+		// Snipers banned in 4s
+
+		if (matchSize >= 4 && weapon.type === 'Sniper Rifle') {
+			violations.push('Snipers banned in 4s');
+		}
+
+		// Exotic pulses/scouts
+
+		if (weapon.isExotic && weapon.type === 'Pulse Rifle') {
+			violations.push('Exotic Pulse banned');
+		}
+
+		if (weapon.isExotic && weapon.type === 'Scout Rifle') {
+			violations.push('Exotic Scout banned');
+		}
+
+		const bannedForType = [...(rules.bannedMods.ALL || []), ...((rules.bannedMods as any)[weapon.type] || [])];
+
+		for (const plug of weapon.plugs || []) {
+			if (bannedForType.includes(plug.name)) {
+				violations.push(`${plug.name} banned on ${weapon.type}`);
+			}
+		}
+	}
+
+	// Aspects
+
+	for (const aspect of player.subclassBuild.aspects || []) {
+		if (rules.bannedAspects.includes(aspect.name)) {
+			violations.push(`${aspect.name} aspect banned`);
+		}
+	}
+
+	// Abilities
+
+	for (const ability of player.subclassBuild.abilities || []) {
+		if (rules.bannedGrenades.includes(ability.name)) {
+			violations.push(`${ability.name} grenade banned`);
+		}
+
+		if (rules.bannedSupers.includes(ability.name)) {
+			violations.push(`${ability.name} super banned`);
+		}
+
+		if (rules.bannedMelees.includes(ability.name)) {
+			violations.push(`${ability.name} melee banned`);
+		}
+	}
+
+	// Fragment bans
+
+	for (const fragment of player.subclassBuild.fragments || []) {
+		if (rules.bannedFragments.includes(fragment.name)) {
+			violations.push(`${fragment.name} fragment banned`);
+		}
+	}
+
+	// Super bans
+
+	if (player.subclassBuild?.super?.name && rules.bannedSupers.includes(player.subclassBuild.super.name)) {
+		violations.push(`${player.subclassBuild.super.name} banned`);
+	}
+
+	return [...new Set(violations)];
+}
+
+function getPlayerScore(player: any) {
+	let score = 0;
+
+	// Base stat weight
+
+	score += player.stats.health;
+	score += player.stats.melee;
+	score += player.stats.grenade;
+	score += player.stats.super;
+	score += player.stats.weapons;
+
+	// Exotic armor value
+
+	if (player.exoticArmor) {
+		score += 15;
+	}
+
+	// Weapon weighting
+
+	for (const weapon of player.weapons) {
+		// Exotics slightly stronger
+
+		if (weapon.isExotic) {
+			score += 10;
+		}
+
+		// Special ammo weapons
+
+		if (['Shotgun', 'Sniper Rifle', 'Fusion Rifle', 'Trace Rifle'].includes(weapon.type)) {
+			score += 8;
+		}
+
+		// Meta-ish archetypes
+
+		if (['Hand Cannon', 'Pulse Rifle'].includes(weapon.type)) {
+			score += 5;
+		}
+	}
+
+	// Violations lower score heavily
+
+	score -= player.violations.length * 50;
+
+	return score;
+}
+
+function canJoinTeam(player: any, team: any[]) {
+	// Max 2 same class
+
+	const sameClass = team.filter((x) => x.class === player.class).length;
+
+	if (sameClass >= 2) {
+		return false;
+	}
+
+	// Max 2 same subclass
+
+	const sameSubclass = team.filter((x) => x.subclass?.name === player.subclass?.name).length;
+
+	if (sameSubclass >= 2) {
+		return false;
+	}
+
+	// Duplicate exotic restrictions
+
+	if (player.exoticArmor?.name) {
+		const sameExotic = team.filter((x) => x.exoticArmor?.name === player.exoticArmor?.name).length;
+
+		if (['Dunemarchers', 'Ophidian Aspect'].includes(player.exoticArmor.name) && sameExotic >= 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function getTeamScore(team: any[]) {
+	return team.reduce((acc, player) => acc + getPlayerScore(player), 0);
+}
+
+function balanceTeams(players: any[]) {
+	// Odd player out becomes spectator
+
+	const spectators = players.length % 2 === 1 ? [players[players.length - 1]] : [];
+
+	const active = spectators.length ? players.slice(0, -1) : players;
+
+	// Sort strongest first
+
+	const sorted = [...active].sort((a, b) => getPlayerScore(b) - getPlayerScore(a));
+
+	const alpha: any[] = [];
+	const bravo: any[] = [];
+
+	for (const player of sorted) {
+		const alphaScore = getTeamScore(alpha);
+
+		const bravoScore = getTeamScore(bravo);
+
+		const alphaCanTake = canJoinTeam(player, alpha);
+
+		const bravoCanTake = canJoinTeam(player, bravo);
+
+		// Prefer weaker team
+
+		if (alphaScore <= bravoScore) {
+			if (alphaCanTake) {
+				alpha.push(player);
+			} else if (bravoCanTake) {
+				bravo.push(player);
+			}
+		} else {
+			if (bravoCanTake) {
+				bravo.push(player);
+			} else if (alphaCanTake) {
+				alpha.push(player);
+			}
+		}
+	}
+
+	return {
+		alpha,
+		bravo,
+		spectators,
+	};
+}
+
+function Info({ icon, label, value, accent = 'blue' }: { icon: React.ReactNode; label: string; value: string; accent?: 'blue' | 'red' | 'yellow' }) {
+	const styles = {
+		blue: {
+			icon: 'text-blue-300',
+			glow: 'from-blue-500/20',
+		},
+
+		red: {
+			icon: 'text-red-300',
+			glow: 'from-red-500/20',
+		},
+
+		yellow: {
+			icon: 'text-yellow-300',
+			glow: 'from-yellow-500/20',
+		},
+	};
+
+	const style = styles[accent];
+
+	return (
+		<div className='relative p-5 overflow-hidden'>
+			<div className={`absolute inset-0 opacity-50 bg-gradient-to-br ${style.glow} via-transparent to-transparent`} />
+
+			<div className='relative'>
+				<div className={`flex items-center gap-2 mb-3 ${style.icon}`}>
+					{icon}
+
+					<span className='text-xs uppercase tracking-[0.2em] font-semibold text-white/40'>{label}</span>
+				</div>
+
+				<div className='text-2xl font-black tracking-tight text-white'>{value}</div>
+			</div>
+		</div>
+	);
+}
+
+function TeamCard({ title, players, issues, rules }: { title: string; players: any[]; issues: string[]; rules: any }) {
+	const totalScore = players.reduce((acc, player) => acc + getPlayerScore(player), 0);
+
+	const isAlpha = title.includes('Alpha');
+
+	return (
+		<div
+			className={`relative rounded-3xl overflow-hidden backdrop-blur-xl border ${
+				isAlpha ? 'bg-blue-500/10 border-blue-500/20 shadow-[0_0_40px_rgba(59,130,246,0.15)]' : 'bg-red-500/10 border-red-500/20 shadow-[0_0_40px_rgba(239,68,68,0.15)]'
+			}`}>
+			<div
+				className={`absolute inset-0 pointer-events-none ${
+					isAlpha ? 'bg-gradient-to-br from-blue-500/20 via-transparent to-transparent' : 'bg-gradient-to-br from-red-500/20 via-transparent to-transparent'
+				}`}
+			/>
+
+			<div className={`relative p-5 border-b ${isAlpha ? 'border-blue-500/20' : 'border-red-500/20'}`}>
+				<div className='flex items-start justify-between gap-4'>
+					<div>
+						<h2 className={`text-2xl font-black ${isAlpha ? 'text-blue-300' : 'text-red-300'}`}>{title}</h2>
+
+						<p className='text-sm text-white/50 mt-1'>
+							Team Score: <span className='text-white font-semibold'>{totalScore}</span>
+						</p>
+					</div>
+
+					<div className={`px-3 py-1 rounded-full text-xs border backdrop-blur-xl ${isAlpha ? 'bg-blue-500/10 border-blue-500/20 text-blue-200' : 'bg-red-500/10 border-red-500/20 text-red-200'}`}>
+						{players.length} Players
+					</div>
+				</div>
+
+				{!!issues.length && (
+					<div className='flex flex-wrap gap-2 mt-4'>
+						{issues.map((issue) => (
+							<div key={issue} className='px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-xs'>
+								{issue}
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+
+			<div className='relative p-5 grid gap-5'>
+				{players.map((player) => (
+					<PlayerCard key={player.characterId} player={player} rules={rules} />
+				))}
+			</div>
+		</div>
+	);
+}
+
+function validateTeam(team: any[], rules: any) {
+	const issues: string[] = [];
+
+	const classes: Record<string, number> = {};
+
+	const subclasses: Record<string, number> = {};
+
+	const exotics: Record<string, number> = {};
+
+	const weaponExotics: Record<string, number> = {};
+
+	const grenades: Record<string, number> = {};
+
+	for (const player of team) {
+		// Class tracking
+
+		classes[player.class] = (classes[player.class] || 0) + 1;
+
+		// Subclass tracking
+
+		if (player.subclass?.name) {
+			subclasses[player.subclass.name] = (subclasses[player.subclass.name] || 0) + 1;
+		}
+
+		// Armor exotic tracking
+
+		if (player.exoticArmor?.name) {
+			exotics[player.exoticArmor.name] = (exotics[player.exoticArmor.name] || 0) + 1;
+		}
+
+		// Grenade tracking
+
+		if (player.subclassBuild?.grenade?.name) {
+			grenades[player.subclassBuild.grenade.name] = (grenades[player.subclassBuild.grenade.name] || 0) + 1;
+		}
+
+		// Exotic weapon tracking
+
+		for (const weapon of player.weapons) {
+			if (weapon.isExotic) {
+				weaponExotics[weapon.name] = (weaponExotics[weapon.name] || 0) + 1;
+			}
+		}
+	}
+
+	// Max 2 same class
+
+	Object.entries(classes).forEach(([name, count]) => {
+		if (count > 2) {
+			issues.push(`Too many ${name}s`);
+		}
+	});
+
+	// No duplicate subclasses
+
+	Object.entries(subclasses).forEach(([name, count]) => {
+		if (count > 1) {
+			issues.push(`Duplicate subclass: ${name}`);
+		}
+	});
+
+	// Restricted duplicate exotics
+
+	Object.entries(exotics).forEach(([name, count]) => {
+		if (['Dunemarchers', 'Ophidian Aspect'].includes(name) && count > 1) {
+			issues.push(`Duplicate exotic: ${name}`);
+		}
+	});
+
+	// No duplicate grenades
+
+	Object.entries(grenades).forEach(([name, count]) => {
+		if (count > 1) {
+			issues.push(`Duplicate grenade: ${name}`);
+		}
+	});
+
+	return [...new Set(issues)];
+}
+function PlayerCard({ player, rules }: { player: any; rules: any }) {
+	const [open, setOpen] = useState(false);
+
+	return (
+		<motion.div
+			layout
+			whileHover={{ y: -4 }}
+			transition={{
+				duration: 0.15,
+			}}
+			className='rounded-3xl overflow-hidden border border-white/10 bg-black/30 backdrop-blur-xl'>
+			<button onClick={() => setOpen(!open)} className='relative h-36 w-full text-left group overflow-hidden'>
+				<img src={player.emblem} alt='' className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105' />
+
+				<div className='absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent' />
+
+				<div className='absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors' />
+
+				<div className='absolute bottom-4 left-4'>
+					<h3 className='text-xl font-black'>{player.name}</h3>
+
+					<p className='text-sm text-white/60'>{player.class}</p>
+				</div>
+
+				<div className='absolute top-3 right-3 flex items-center gap-2'>
+					{!!player.violations?.length && (
+						<div className='px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-semibold backdrop-blur-xl'>
+							{player.violations.length} Violation
+							{player.violations.length !== 1 && 's'}
+						</div>
+					)}
+
+					<div className='w-9 h-9 rounded-full bg-black/40 border border-white/10 backdrop-blur-xl flex items-center justify-center'>
+						<motion.div
+							animate={{
+								rotate: open ? 180 : 0,
+							}}>
+							<ChevronDown className='w-4 h-4 text-white/70' />
+						</motion.div>
+					</div>
+				</div>
+			</button>
+
+			<AnimatePresence initial={false}>
+				{open && (
+					<motion.div
+						initial={{
+							height: 0,
+							opacity: 0,
+						}}
+						animate={{
+							height: 'auto',
+							opacity: 1,
+						}}
+						exit={{
+							height: 0,
+							opacity: 0,
+						}}
+						transition={{
+							duration: 0.2,
+						}}
+						className='overflow-hidden'>
+						<div className='p-4'>
+							<div className='grid grid-cols-2 gap-3'>
+								<Stat label='Health' value={player.stats.health} rules={rules} />
+
+								<Stat label='Melee' value={player.stats.melee} red={player.stats.melee > 50} rules={rules} />
+
+								<Stat label='Grenade' value={player.stats.grenade} red={player.stats.grenade > 50} rules={rules} />
+
+								<Stat label='Super' value={player.stats.super} red={player.stats.super > 50} rules={rules} />
+
+								<Stat label='Weapons' value={player.stats.weapons} red={player.stats.weapons > 50} rules={rules} />
+
+								<Stat label='Class' value={player.stats.classAbility} rules={rules} />
+							</div>
+
+							<div className='mt-5 grid gap-3 text-sm'>
+								<div className='rounded-2xl bg-white/[0.03] border border-white/5 p-3'>
+									<div className='text-[10px] uppercase tracking-wider text-white/40 mb-1'>Subclass</div>
+
+									<div className='font-semibold'>{player.subclass?.name || 'Unknown'}</div>
+								</div>
+
+								{player.exoticArmor && (
+									<div className='rounded-2xl bg-yellow-500/10 border border-yellow-500/20 p-3'>
+										<div className='text-[10px] uppercase tracking-wider text-yellow-200/50 mb-1'>Exotic Armor</div>
+
+										<div className='font-semibold text-yellow-300'>{player.exoticArmor.name}</div>
+									</div>
+								)}
+							</div>
+
+							<div className='mt-5'>
+								<div className='text-xs uppercase tracking-wider text-white/40 mb-3'>Loadout</div>
+
+								<div className='grid gap-2'>
+									{player.weapons.map((weapon: any) => (
+										<div key={weapon.itemInstanceId} className={`rounded-2xl border p-3 ${weapon.isExotic ? 'bg-yellow-500/10 border-yellow-500/20' : 'bg-white/[0.03] border-white/5'}`}>
+											<div className='flex items-center justify-between gap-3'>
+												<div>
+													<div className='font-semibold'>{weapon.name}</div>
+
+													<div className='text-xs text-white/50'>{weapon.type}</div>
+												</div>
+
+												{weapon.isExotic && <div className='text-[10px] uppercase tracking-wider text-yellow-300'>Exotic</div>}
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+
+							{!!player.violations?.length && (
+								<div className='mt-5'>
+									<div className='flex items-center gap-2 text-red-300 mb-3'>
+										<AlertTriangle className='w-4 h-4' />
+
+										<span className='text-sm font-semibold'>Violations</span>
+									</div>
+
+									<div className='flex flex-wrap gap-2'>
+										{player.violations.map((v: string) => (
+											<div key={v} className='px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-300 text-xs'>
+												{v}
+											</div>
+										))}
+									</div>
+								</div>
+							)}
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</motion.div>
+	);
+}
+
+function Stat({ label, value, red, rules }: { label: string; value: number; red?: boolean; rules: any }) {
+	const statKeyMap = {
+		Health: null,
+		Class: null,
+		Melee: 'melee',
+		Grenade: 'grenade',
+		Super: 'super',
+		Weapons: 'weapons',
+	};
+
+	const statKey = statKeyMap[label as keyof typeof statKeyMap];
+
+	const maxAllowed = statKey ? (rules.maxStats as any)[statKey as any] : 200;
+
+	return (
+		<div className='rounded-2xl bg-white/[0.04] border border-white/5 p-3'>
+			<div className='text-[10px] uppercase tracking-wider text-white/40 mb-1'>{label}</div>
+
+			<div className={`text-lg font-black transition-colors ${red ? 'text-red-400' : 'text-white'}`}>{value}</div>
+
+			<div className='relative mt-2 h-1.5 rounded-full bg-white/5 overflow-visible'>
+				{/* Max marker */}
+
+				{statKey && (
+					<>
+						<div
+							className='absolute top-1/2 -translate-y-1/2 z-10'
+							style={{
+								left: `${(maxAllowed / 200) * 100}%`,
+							}}>
+							<div className='w-[2px] h-4 bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.8)] rounded-full' />
+						</div>
+
+						<div
+							className='absolute -top-5 text-[9px] text-red-300/80 font-semibold'
+							style={{
+								left: `${(maxAllowed / 200) * 100}%`,
+								transform: 'translateX(-50%)',
+							}}>
+							{maxAllowed}
+						</div>
+					</>
+				)}
+
+				{/* Fill */}
+
+				<div
+					className={`h-full rounded-full transition-all ${red ? 'bg-red-400' : 'bg-white/70'}`}
+					style={{
+						width: `${Math.min((value / 200) * 100, 100)}%`,
+					}}
+				/>
+			</div>
+		</div>
+	);
+}
+
+function extractSubclassBuild(plugs: any[]) {
+	return {
+		super: plugs.find((x: any) => x.type?.includes('Super')),
+
+		melee: plugs.find((x: any) => x.type?.includes('Melee')),
+
+		grenade: plugs.find((x: any) => x.type?.includes('Grenade')),
+
+		classAbility: plugs.find((x: any) => x.type?.includes('Class Ability')),
+
+		movement: plugs.find((x: any) => x.type?.includes('Movement')),
+
+		aspects: plugs.filter((x: any) => x.type?.toLowerCase().includes('aspect')),
+
+		fragments: plugs.filter((x: any) => x.type?.toLowerCase().includes('fragment')),
+
+		all: plugs,
+	};
+}
+
+function BanList({ definitions, rules }: { definitions: any; rules: any }) {
+	const [open, setOpen] = useState(false);
+
+	const [search, setSearch] = useState('');
+
+	const bannedItems = [
+		...rules.bannedWeapons.map((name: any) => ({
+			type: 'Weapon',
+			name,
+		})),
+
+		...Object.entries(rules.bannedExotics).flatMap(([cls, items]) =>
+			(items as string[]).map((name) => ({
+				type: `${cls} Exotic`,
+				name,
+			}))
+		),
+
+		...rules.bannedAspects.map((name: any) => ({
+			type: 'Aspect',
+			name,
+		})),
+
+		...rules.bannedFragments.map((name: any) => ({
+			type: 'Fragment',
+			name,
+		})),
+
+		...rules.bannedGrenades.map((name: any) => ({
+			type: 'Grenade',
+			name,
+		})),
+
+		...rules.bannedSupers.map((name: any) => ({
+			type: 'Super',
+			name,
+		})),
+
+		...rules.bannedMelees.filter(Boolean).map((name: any) => ({
+			type: 'Melee',
+			name,
+		})),
+
+		...Object.entries(rules.bannedMods).flatMap(([weaponType, mods]) =>
+			(mods as string[]).map((name) => ({
+				type: `${weaponType} Mod`,
+				name,
+			}))
+		),
+	];
+
+	const resolved = useMemo(() => {
+		const allDefs = Object.values(definitions.items || {}) as any[];
+
+		const mapped = bannedItems.map((item) => {
+			const def = allDefs.find((x: any) => {
+				const nameMatch = x.displayProperties?.name === item.name;
+
+				if (!nameMatch) return false;
+
+				const itemType = x.itemTypeDisplayName || '';
+
+				/* -------------------- WEAPONS -------------------- */
+
+				if (item.type === 'Weapon') {
+					return x.itemType === 3;
+				}
+
+				/* -------------------- EXOTICS -------------------- */
+
+				if (item.type.includes('Exotic')) {
+					return x.inventory?.tierTypeName === 'Exotic' && x.itemType !== 3 && x.itemType !== 19;
+				}
+
+				/* -------------------- ABILITIES -------------------- */
+
+				if (['Aspect', 'Fragment', 'Grenade', 'Super', 'Melee'].includes(item.type)) {
+					return x.itemType === 19 || itemType.includes('Ability');
+				}
+
+				/* -------------------- MODS -------------------- */
+
+				if (item.type.includes('Mod')) {
+					return (
+						itemType.includes('Trait') ||
+						itemType.includes('Mod') ||
+						itemType.includes('Perk') ||
+						itemType.includes('Catalyst') ||
+						x.plug?.plugCategoryIdentifier?.includes('weapon') ||
+						x.plug?.plugCategoryIdentifier?.includes('masterwork') ||
+						x.plug?.plugCategoryIdentifier?.includes('intrinsics') ||
+						x.plug?.plugCategoryIdentifier?.includes('v400.plugs')
+					);
+				}
+
+				return true;
+			}) as any;
+
+			return {
+				...item,
+
+				icon: def?.displayProperties?.icon,
+
+				tier: def?.inventory?.tierTypeName,
+			};
+		});
+
+		return Array.from(new Map(mapped.map((item) => [`${item.type}:${item.name}`, item])).values());
+	}, [definitions]);
+
+	const filtered = resolved.filter((x) => `${x.name} ${x.type}`.toLowerCase().includes(search.toLowerCase()));
+
+	return (
+		<div className='mt-8 rounded-3xl border border-white/10 bg-white/[0.03] overflow-hidden'>
+			<motion.button
+				whileTap={{
+					scale: 0.995,
+				}}
+				onClick={() => setOpen(!open)}
+				className='w-full p-5 flex items-center justify-between hover:bg-white/[0.02] transition'>
+				<div>
+					<h2 className='text-2xl font-black text-left'>Ban List</h2>
+
+					<p className='text-sm text-white/50 text-left mt-1'>{bannedItems.length} restrictions.</p>
+				</div>
+
+				<div className='w-9 h-9 rounded-full bg-black/40 border border-white/10 backdrop-blur-xl flex items-center justify-center'>
+					<motion.div
+						animate={{
+							rotate: open ? 180 : 0,
+						}}
+						transition={{
+							duration: 0.2,
+						}}>
+						<ChevronDown className='w-4 h-4 text-white/70' />
+					</motion.div>
+				</div>
+			</motion.button>
+
+			<AnimatePresence initial={false}>
+				{open && (
+					<motion.div
+						initial={{
+							height: 0,
+							opacity: 0,
+						}}
+						animate={{
+							height: 'auto',
+							opacity: 1,
+						}}
+						exit={{
+							height: 0,
+							opacity: 0,
+						}}
+						transition={{
+							duration: 0.25,
+						}}
+						className='overflow-hidden'>
+						<div className='border-t border-white/10 p-5'>
+							<motion.div
+								initial={{
+									y: -10,
+									opacity: 0,
+								}}
+								animate={{
+									y: 0,
+									opacity: 1,
+								}}
+								transition={{
+									delay: 0.05,
+								}}
+								className='mb-5'>
+								<input
+									value={search}
+									onChange={(e) => setSearch(e.target.value)}
+									placeholder='Search bans...'
+									className='w-full rounded-2xl bg-black/30 border border-white/10 px-4 py-3 outline-none focus:border-white/20 transition'
+								/>
+							</motion.div>
+
+							<motion.div layout className='grid md:grid-cols-2 xl:grid-cols-3 gap-3'>
+								{filtered.length ? (
+									filtered.map((item, i) => (
+										<motion.div
+											layout
+											initial={{
+												opacity: 0,
+												y: 10,
+												scale: 0.96,
+											}}
+											animate={{
+												opacity: 1,
+												y: 0,
+												scale: 1,
+											}}
+											exit={{
+												opacity: 0,
+												scale: 0.96,
+											}}
+											transition={{
+												delay: i * 0.01,
+											}}
+											whileHover={{
+												y: -2,
+											}}
+											key={`${item.type}:${item.name}`}
+											className='rounded-2xl border border-white/10 bg-black/20 p-3 flex items-center gap-3'>
+											<div className='w-14 h-14 rounded-xl overflow-hidden bg-white/5 shrink-0'>
+												{item.icon ? (
+													<img src={`https://bungie.net${item.icon}`} alt='' className='w-full h-full object-cover' />
+												) : (
+													<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
+												)}
+											</div>
+
+											<div className='min-w-0'>
+												<div className='font-semibold truncate'>{item.name}</div>
+
+												<div className='text-xs text-white/50'>{item.type}</div>
+
+												{item.tier && <div className='text-[10px] mt-1 text-white/30'>{item.tier}</div>}
+											</div>
+										</motion.div>
+									))
+								) : (
+									<motion.div
+										initial={{
+											opacity: 0,
+										}}
+										animate={{
+											opacity: 1,
+										}}
+										className='col-span-full text-center text-white/40 py-10'>
+										Whatever you’re looking for is allowed. A rare moment of freedom.
+									</motion.div>
+								)}
+							</motion.div>
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</div>
+	);
+}

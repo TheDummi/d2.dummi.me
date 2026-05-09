@@ -98,7 +98,7 @@ export const authOptions: AuthOptions = {
 			const user = await bungieFetch(
 				`/Destiny2/${memberships?.destinyMemberships?.find((m: any) => m.membershipId === memberships?.primaryMembershipId)?.membershipType}/Profile/${
 					memberships?.primaryMembershipId
-				}?components=100,102,103,200,201,203,204,205,900,1000`,
+				}?components=100,102,103,200,201,203,204,205,304,305,900,1000`,
 				token.accessToken
 			);
 			const friends = await bungieFetch('/Social/Friends/', token.accessToken);

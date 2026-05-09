@@ -30,14 +30,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 	}, [headerHeight]);
 
 	return (
-		<div className='h-screen overflow-hidden'>
-			<header ref={headerRef} className='sticky top-0 z-50'>
+		<div className='h-full overflow-hidden'>
+			<header ref={headerRef} className='fixed top-0 z-50 w-full'>
 				<Header />
 			</header>
 
-			<div className='h-full overflow-y-auto' style={{ height: `calc(100vh - ${headerHeight}px)` }}>
-				{children}
-			</div>
+			<div className='mt-35'>{children}</div>
 		</div>
 	);
 }

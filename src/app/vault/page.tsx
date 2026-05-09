@@ -187,7 +187,7 @@ export default function Page() {
 	}
 
 	return (
-		<div className='w-full bg-linear-to-br from-[#2c3138] to-[#1a1d22] text-white'>
+		<div className='w-full bg-linear-to-br  text-white'>
 			<h1>
 				<center>Page is a work in progress and is far from functional!</center>
 			</h1>

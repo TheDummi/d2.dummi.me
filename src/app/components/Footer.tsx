@@ -3,7 +3,7 @@
 
 export default function Footer() {
 	return (
-		<footer className='bg-neutral-900 text-neutral-300 p-6 mt-12 rounded-t-2xl shadow-inner'>
+		<footer className='bg-neutral-900 text-neutral-300 p-6  rounded-t-2xl shadow-inner'>
 			<div className='max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4'>
 				{/* Left Section: Links */}
 				<div className='flex gap-4 flex-wrap justify-center'>

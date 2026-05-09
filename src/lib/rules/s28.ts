@@ -5,8 +5,8 @@ export default {
 
 	maxStats: {
 		melee: 70,
-		grenade: 60,
-		super: 60,
+		grenade: 70,
+		super: 70,
 		weapons: 70,
 	},
 

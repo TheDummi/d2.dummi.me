@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import Header from './components/Header';
 import type { Metadata } from 'next';
 import SessionProvider from '@/app/components/SessionProvider';
+import { ToastProvider } from './providers/ToastProvider';
 import { authOptions } from './api/auth/[...nextauth]/route';
 import { getServerSession } from 'next-auth';
 
@@ -82,8 +83,10 @@ export default async function RootLayout({
 				<SessionProvider session={session} refetchInterval={90}>
 					<CharacterProvider>
 						<FireteamProvider>
-							<AppShell>{children}</AppShell>
-							<Footer />
+							<ToastProvider>
+								<AppShell>{children}</AppShell>
+								<Footer />
+							</ToastProvider>
 						</FireteamProvider>
 					</CharacterProvider>
 				</SessionProvider>

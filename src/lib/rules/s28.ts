@@ -24,7 +24,7 @@ export default {
 		'Revoker',
 		'Bastion',
 		'Succession',
-		'No Land Beyond',
+		'New Land Beyond',
 		'Something Something',
 		'Critical Anomaly',
 		'Critical Anomaly (Adept)',
@@ -64,7 +64,7 @@ export default {
 		"Nessa's Oblation",
 		'Phoneutria Fera',
 		'Sarpedon-D',
-		'First in, Last Out',
+		'First In, Last Out',
 		"Gunnora's Axe",
 	],
 

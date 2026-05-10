@@ -154,7 +154,7 @@ export default function Header() {
 
 	return (
 		<>
-			<header className='sticky top-0 z-50 flex flex-col text-neutral-100 shadow-md bg-cover bg-center' style={{ backgroundImage: emblem ? `url(${emblem})` : undefined }}>
+			<header className='top-0 z-50 flex flex-col text-neutral-100 shadow-md bg-cover bg-center' style={{ backgroundImage: emblem ? `url(${emblem})` : undefined }}>
 				<div className='flex items-center justify-between px-6 py-3 backdrop-blur-sm bg-neutral-900/75'>
 					{session ? (
 						<button onClick={() => setSidebarOpen(true)} className='flex items-center gap-3 rounded-full px-3 py-1 bg-neutral-800/60 hover:bg-neutral-700/70 transition'>

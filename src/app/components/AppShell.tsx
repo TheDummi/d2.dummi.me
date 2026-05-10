@@ -30,12 +30,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 	}, [headerHeight]);
 
 	return (
-		<div className='h-full overflow-hidden'>
-			<header ref={headerRef} className='fixed top-0 z-50 w-full'>
+		<div className='h-full'>
+			<header ref={headerRef} className='top-0 z-50 w-full'>
 				<Header />
 			</header>
 
-			<div className='mt-35'>{children}</div>
+			<div className='overflow-auto h-full'>{children}</div>
 		</div>
 	);
 }

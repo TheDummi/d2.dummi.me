@@ -5,7 +5,7 @@ export default function Home() {
 	return (
 		<div className='min-h-screen bg-neutral-950 text-neutral-100 font-sans'>
 			{/* HERO */}
-			<section className='relative overflow-hidden'>
+			<section className='relative'>
 				<div className='absolute inset-0 bg-gradient-to-b from-purple-900/20 via-neutral-950 to-neutral-950' />
 				<div className='relative max-w-6xl mx-auto px-6 pt-28 pb-20 text-center'>
 					<h1 className='text-6xl font-extrabold tracking-tight text-white'>

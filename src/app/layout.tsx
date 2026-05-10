@@ -78,7 +78,7 @@ export default async function RootLayout({
 
 	return (
 		<html lang='en'>
-			<body className={``}>
+			<body className={`overflow-auto`}>
 				<SessionProvider session={session} refetchInterval={90}>
 					<CharacterProvider>
 						<FireteamProvider>

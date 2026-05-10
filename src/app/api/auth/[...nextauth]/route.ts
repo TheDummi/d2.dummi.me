@@ -58,38 +58,65 @@ export const authOptions: AuthOptions = {
 
 	callbacks: {
 		async jwt({ token, account }) {
+			/* -------------------- INITIAL LOGIN -------------------- */
+
 			if (account) {
 				token.accessToken = account.access_token;
 				token.refreshToken = account.refresh_token;
-				token.valid = account.expires_at! * 1000 > Date.now();
+
+				// absolute expiry timestamp
+				token.accessTokenExpires = (account.expires_at as number) * 1000;
+
 				token.membershipId = account.membership_id;
+
+				return token;
 			}
 
-			if (!token.valid) {
+			/* -------------------- TOKEN STILL VALID -------------------- */
+
+			if (Date.now() < (token.accessTokenExpires as number)) {
+				return token;
+			}
+
+			/* -------------------- REFRESH TOKEN -------------------- */
+
+			try {
 				const response = await fetch('https://www.bungie.net/platform/app/oauth/token/', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded',
 					},
 					body: new URLSearchParams({
-						refresh_token: token.refreshToken! as string,
 						grant_type: 'refresh_token',
+						refresh_token: token.refreshToken as string,
 						client_id: process.env.BUNGIE_ID!,
 						client_secret: process.env.BUNGIE_SECRET!,
 					}),
 				});
 
-				if (!response.ok) return token;
+				if (!response.ok) {
+					throw new Error('Failed to refresh token');
+				}
 
-				const account = await response.json();
+				const refreshed = await response.json();
 
-				token.accessToken = account.access_token;
-				token.refreshToken = account.refresh_token;
-				token.valid = account.expirationDate > Date.now();
-				token.membershipId = account.membership_id;
+				return {
+					...token,
+
+					accessToken: refreshed.access_token,
+
+					refreshToken: refreshed.refresh_token ?? token.refreshToken,
+
+					accessTokenExpires: Date.now() + refreshed.expires_in * 1000,
+				};
+			} catch (error) {
+				console.error('Refresh token error:', error);
+
+				return {
+					...token,
+					error: 'RefreshAccessTokenError',
+				};
 			}
-
-			return token;
 		},
 
 		// @ts-expect-error - add type safe later
@@ -118,6 +145,7 @@ export const authOptions: AuthOptions = {
 			session.user = memberships?.bungieNetUser;
 			session.character = character;
 			session = { ...session, ...user };
+			session.error = token.error;
 
 			if (!session.user) return null;
 

@@ -28,6 +28,10 @@ export default function Page() {
 	const [rulesets, setRulesets] = useState<any>({});
 	const [ruleSelector, setRuleSelector] = useState<Array<{ value: string; name: string }>>([]);
 
+	const [selectedMap, setSelectedMap] = useState<any>(null);
+	const [rollingMap, setRollingMap] = useState<any>(null);
+	const [rolling, setRolling] = useState(false);
+
 	useEffect(() => {
 		(async () => {
 			try {
@@ -52,6 +56,7 @@ export default function Page() {
 					'DestinySocketTypeDefinition',
 					'DestinyPlugSetDefinition',
 					'DestinySandboxPerkDefinition',
+					'DestinyActivityDefinition',
 				];
 
 				const responses = await Promise.all(
@@ -86,6 +91,8 @@ export default function Page() {
 					plugs: mapped['DestinyPlugSetDefinition'],
 
 					perks: mapped['DestinySandboxPerkDefinition'],
+
+					activities: mapped['DestinyActivityDefinition'],
 				});
 			} catch (err) {
 				console.error('Manifest load failed:', err);
@@ -111,6 +118,81 @@ export default function Page() {
 	const { alpha, bravo, spectators } = useMemo(() => {
 		return balanceTeams(players);
 	}, [players]);
+
+	const maps = useMemo(() => {
+		if (!definitions.activities) return [];
+
+		return Object.values(definitions.activities)
+			.filter((activity: any) => {
+				const { name, icon, hasIcon } = activity.displayProperties;
+
+				if (!name || !hasIcon) return false;
+
+				// remove junk
+				if (
+					name.includes('Quest') ||
+					name.includes('Matchmade') ||
+					name.includes('Story') ||
+					name.includes('Strike') ||
+					name.includes('Dungeon') ||
+					name.includes('Raid') ||
+					name.includes('Offensive') ||
+					name.includes('Private') ||
+					name.includes('Iron Banner') ||
+					name.includes(':')
+				) {
+					return false;
+				}
+
+				// PvP only
+				return activity.isPvP && !activity.isPlaylist;
+			})
+			.map((activity: any) => ({
+				hash: activity.hash,
+				name: activity.displayProperties.name,
+				description: activity.displayProperties.description,
+				image: activity.pgcrImage,
+			}));
+	}, [definitions]);
+
+	useEffect(() => {
+		if (!maps.length || selectedMap) return;
+
+		setSelectedMap(maps[Math.floor(Math.random() * maps.length)]);
+	}, [maps]);
+
+	async function rerollMap() {
+		if (!maps.length || rolling) return;
+
+		setRolling(true);
+
+		const duration = 2200;
+
+		const start = Date.now();
+
+		let delay = 60;
+
+		let chosen = maps[Math.floor(Math.random() * maps.length)];
+
+		while (Date.now() - start < duration) {
+			const randomMap = maps[Math.floor(Math.random() * maps.length)];
+
+			setRollingMap(randomMap);
+
+			await new Promise((r) => setTimeout(r, delay));
+
+			// progressively slow down
+			delay += 18;
+
+			chosen = randomMap;
+		}
+
+		setSelectedMap(chosen);
+		setRollingMap(null);
+		setRolling(false);
+	}
+
+	const displayMap = rollingMap || selectedMap;
 
 	if (loading || manifestLoading || !rules) {
 		return (
@@ -154,6 +236,7 @@ export default function Page() {
 						<p className='text-white/50'>Competitive Destiny. These are unofficial scrim rules, this is how we like to play. (if old user data loads like the wrong character, fly in to tower.)</p>
 					</div>
 				</div>
+
 				<div className='relative mb-10 overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] backdrop-blur-2xl'>
 					{/* Background glow */}
 
@@ -173,11 +256,216 @@ export default function Page() {
 						<Info icon={<Trophy className='w-5 h-5' />} label='Score' value={fireteam.length >= 8 ? '75' : '50'} accent='yellow' />
 					</div>
 				</div>
+
+				<AnimatePresence mode='wait'>
+					<motion.div
+						key={selectedMap?.hash}
+						initial={{
+							opacity: 0,
+							y: 40,
+							scale: 1.03,
+							filter: 'blur(14px)',
+						}}
+						animate={{
+							opacity: 1,
+							y: 0,
+							scale: 1,
+							filter: 'blur(0px)',
+						}}
+						exit={{
+							opacity: 0,
+							y: -40,
+							scale: 0.98,
+							filter: 'blur(10px)',
+						}}
+						transition={{
+							duration: 0.45,
+							ease: [0.22, 1, 0.36, 1],
+						}}
+						className='group relative mb-10 overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/[0.04] backdrop-blur-2xl h-72 shadow-[0_0_80px_rgba(255,255,255,0.03)]'>
+						{/* Background image */}
+
+						<AnimatePresence mode='wait'>
+							<motion.img
+								key={displayMap?.hash}
+								src={`https://bungie.net${displayMap?.image}`}
+								alt={displayMap?.name}
+								initial={{
+									scale: 1.12,
+									opacity: 0,
+									filter: 'blur(12px)',
+								}}
+								animate={{
+									scale: rolling ? 1.04 : 1,
+									opacity: 1,
+									filter: 'blur(0px)',
+									x: rolling ? [0, -8, 8, -4, 0] : 0,
+								}}
+								exit={{
+									scale: 0.94,
+									opacity: 0,
+									filter: 'blur(10px)',
+								}}
+								transition={{
+									duration: rolling ? 0.16 : 0.55,
+									ease: [0.22, 1, 0.36, 1],
+								}}
+								className='absolute inset-0 w-full h-full object-cover'
+							/>
+						</AnimatePresence>
+
+						{/* Ambient glow */}
+
+						<div className='absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-red-500/10 pointer-events-none' />
+
+						{/* Main overlays */}
+
+						<div className='absolute inset-0 bg-gradient-to-t from-black via-black/75 to-black/10' />
+
+						<div className='absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent' />
+
+						{/* Vignette */}
+
+						<div className='absolute inset-0 shadow-[inset_0_-120px_120px_rgba(0,0,0,0.95)] pointer-events-none' />
+
+						{/* Noise texture */}
+
+						<div className='absolute inset-0 opacity-[0.05] mix-blend-soft-light pointer-events-none bg-[radial-gradient(circle_at_center,white_1px,transparent_1px)] bg-[size:14px_14px]' />
+
+						{/* Shine sweep */}
+
+						<motion.div
+							initial={{
+								x: '-120%',
+							}}
+							animate={{
+								x: '120%',
+							}}
+							transition={{
+								duration: 0.9,
+								ease: 'easeInOut',
+							}}
+							className='absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg]'
+						/>
+
+						{/* Rolling scan effect */}
+
+						{rolling && (
+							<motion.div
+								initial={{
+									y: '-100%',
+								}}
+								animate={{
+									y: '200%',
+								}}
+								transition={{
+									duration: 0.45,
+									repeat: Infinity,
+									ease: 'linear',
+								}}
+								className='absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-cyan-300/10 to-transparent blur-xl pointer-events-none'
+							/>
+						)}
+
+						{/* Content */}
+
+						<div className='relative h-full p-7 flex flex-col justify-end'>
+							<motion.div
+								initial={{
+									opacity: 0,
+									y: 12,
+								}}
+								animate={{
+									opacity: 1,
+									y: 0,
+								}}
+								transition={{
+									delay: 0.08,
+								}}
+								className='text-[10px] uppercase tracking-[0.35em] text-white/40 mb-2'>
+								Selected Map
+							</motion.div>
+
+							<AnimatePresence mode='wait'>
+								<motion.h2
+									key={displayMap?.hash}
+									initial={{
+										y: 24,
+										opacity: 0,
+										filter: 'blur(8px)',
+										scale: 0.96,
+									}}
+									animate={{
+										y: 0,
+										opacity: 1,
+										filter: 'blur(0px)',
+										scale: rolling ? 1.01 : 1,
+									}}
+									exit={{
+										y: -24,
+										opacity: 0,
+										filter: 'blur(8px)',
+										scale: 1.04,
+									}}
+									transition={{
+										duration: rolling ? 0.1 : 0.38,
+										ease: [0.22, 1, 0.36, 1],
+									}}
+									className='text-5xl md:text-6xl font-black tracking-[-0.04em] leading-none drop-shadow-[0_4px_30px_rgba(0,0,0,0.8)]'>
+									{displayMap?.name || 'Loading...'}
+								</motion.h2>
+							</AnimatePresence>
+
+							<motion.p
+								initial={{
+									opacity: 0,
+									y: 18,
+								}}
+								animate={{
+									opacity: 1,
+									y: 0,
+								}}
+								transition={{
+									delay: 0.18,
+								}}
+								className='text-sm text-white/50 mt-3 max-w-2xl line-clamp-2'>
+								{displayMap?.description || 'Humanity continues resolving conflict through glowing rectangles.'}
+							</motion.p>
+
+							<motion.div
+								initial={{
+									opacity: 0,
+									y: 18,
+								}}
+								animate={{
+									opacity: 1,
+									y: 0,
+								}}
+								transition={{
+									delay: 0.24,
+								}}
+								className='mt-6 flex items-center gap-3'>
+								<button
+									onClick={rerollMap}
+									disabled={rolling}
+									className='group/button relative overflow-hidden px-5 py-3 rounded-2xl border border-white/10 bg-black/40 hover:bg-white/[0.06] hover:border-white/20 transition-all duration-300 text-sm font-semibold backdrop-blur-xl disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]'>
+									<div className='absolute inset-0 opacity-0 group-hover/button:opacity-100 transition bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/button:translate-x-[100%] duration-700' />
+
+									<span className='relative z-10'>{rolling ? 'Rolling Maps...' : 'Reroll Map'}</span>
+								</button>
+
+								{rolling && <div className='text-xs uppercase tracking-[0.25em] text-cyan-300/70 animate-pulse'>Searching Arena...</div>}
+							</motion.div>
+						</div>
+					</motion.div>
+				</AnimatePresence>
+
 				<div className='grid xl:grid-cols-2 gap-8'>
 					<TeamCard title='Alpha Team' players={alpha} issues={validateTeam(alpha, rules)} rules={rules} />
 
 					<TeamCard title='Bravo Team' players={bravo} issues={validateTeam(bravo, rules)} rules={rules} />
 				</div>
+
 				{!!spectators.length && (
 					<div className='mt-8 rounded-3xl border border-white/10 bg-white/[0.03] p-5'>
 						<div className='flex items-center gap-3 mb-5'>

@@ -66,6 +66,7 @@ export default {
 		'Sarpedon-D',
 		'First In, Last Out',
 		"Gunnora's Axe",
+		'Conditional Finality',
 	],
 
 	bannedMods: {

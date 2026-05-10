@@ -1055,7 +1055,7 @@ function validateTeam(team: any[], rules: any) {
 
 	Object.entries(subclasses).forEach(([name, count]) => {
 		if (count > 1) {
-			issues.push(`Duplicate subclass: ${name}`);
+			issues.push(`Duplicate super: ${name}`);
 		}
 	});
 

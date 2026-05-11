@@ -188,13 +188,13 @@ export default function Header() {
 						</Link>
 
 						<Link
-							href='/vault'
+							href='/inventory'
 							className={
-								pathname === '/vault'
+								pathname === '/inventory'
 									? 'text-sm font-medium text-white underline underline-offset-4 decoration-violet-500'
 									: 'text-sm font-medium text-neutral-300 hover:text-white hover:underline underline-offset-4 decoration-neutral-500'
 							}>
-							Vault
+							Inventory
 						</Link>
 					</div>
 				</div>

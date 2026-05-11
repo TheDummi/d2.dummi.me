@@ -3,6 +3,23 @@
 export default {
 	season: 'Season 28',
 
+	gameSettings: {
+		type: 'Clash',
+		time: '15min',
+		score: { 3: '50', 4: '70' },
+		resurrectuion: 'Disabled',
+		respawn: '7s',
+		overshield: 'Disabled',
+		radar: 'Enabled',
+		special: { option: 'Default', cooldown: '60s' },
+		heavy: 'Disabled',
+		grenade: 'Default',
+		melee: 'Default',
+		class: 'Default',
+		super: 'Default',
+		modifiers: 'None',
+	},
+
 	maxStats: {
 		melee: 70,
 		grenade: 70,
@@ -77,7 +94,7 @@ export default {
 		'Hand Cannon': ['Lumina Catalyst'],
 	},
 
-	bannedTypes: ['Sidearm', 'Bow', 'Grenade Launcher', 'Linear Fusion Rifle', 'Glaive', 'Fusion Rifle', 'Trace Rifle', 'Sword', 'Pulse Rifle', 'Scout Rifle'],
+	bannedTypes: ['Sidearm', 'Combat Bow', 'Grenade Launcher', 'Linear Fusion Rifle', 'Glaive', 'Fusion Rifle', 'Trace Rifle', 'Sword', 'Pulse Rifle', 'Scout Rifle'],
 
 	bannedExotics: {
 		Titan: [
@@ -212,5 +229,5 @@ export default {
 
 	bannedSupers: ['Well of Radiance', 'Ward of Dawn'],
 
-	bannedMelees: [''],
+	bannedMelees: [],
 };

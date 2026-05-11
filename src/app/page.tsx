@@ -21,8 +21,8 @@ export default function Home() {
 							Open Triumphs
 						</a>
 
-						<a href='/vault' className='px-8 py-4 rounded-xl bg-neutral-800 text-neutral-200 hover:bg-neutral-700 transition'>
-							View Vault
+						<a href='/inventory' className='px-8 py-4 rounded-xl bg-neutral-800 text-neutral-200 hover:bg-neutral-700 transition'>
+							View Inventory
 						</a>
 					</div>
 				</div>

@@ -9,6 +9,7 @@ import CharacterPreview from '@/components/inventory/CharacterPreview';
 import CharacterStats from '@/components/inventory/CharacterStats';
 import Slot from '@/components/inventory/Slot';
 import SubclassPanel from '@/components/inventory/SubclassPanel';
+import Toolbar from '@/components/inventory/Toolbar';
 import { useCharacter } from '@/app/components/CharacterProvider';
 import { useToast } from '../providers/ToastProvider';
 
@@ -22,6 +23,10 @@ export default function Page() {
 	const [loading, setLoading] = useState(true);
 
 	const [manifest, setManifest] = useState<any>({});
+
+	const [farmingEnabled, setFarmingEnabled] = useState(false);
+	const [transferringItems, setTransferringItems] = useState<Set<string>>(new Set());
+	const [lastManualPull, setLastManualPull] = useState<number>(0);
 
 	const [slots, setSlots] = useState<Record<string, any[]>>({
 		kinetic: [],
@@ -37,9 +42,20 @@ export default function Page() {
 		subclass: [],
 	});
 
+	const [slotFreeSpace, setSlotFreeSpace] = useState<Record<string, number>>({
+		kinetic: 3,
+		energy: 3,
+		power: 3,
+
+		helmet: 3,
+		gauntlets: 3,
+		chest: 3,
+		legs: 3,
+		classItem: 3,
+	});
+
 	const [openVault, setOpenVault] = useState<string | null>(null);
 	const [vaultLoading, setVaultLoading] = useState(false);
-	const [equippingItem, setEquippingItem] = useState<string | null>(null);
 
 	const [plugSets, setPlugSets] = useState<any>({});
 	const [socketTypes, setSocketTypes] = useState<any>({});
@@ -165,7 +181,19 @@ export default function Page() {
 	async function equipItem(item: any) {
 		const previousSlots = structuredClone(slots);
 
+		const id = item.itemInstanceId;
+
 		try {
+			if (transferringItems.has(id)) {
+				return;
+			}
+
+			setTransferringItems((prev) => new Set(prev).add(id));
+
+			if (item.location === 2) {
+				await transferItem(item, false);
+			}
+
 			toast(`Equipping ${item.displayProperties.name}`, 'info');
 
 			const response = await fetch('/api/Destiny2/equip', {
@@ -207,11 +235,25 @@ export default function Page() {
 
 				for (const key of Object.keys(next)) {
 					next[key] = next[key].map((x: any) => {
-						// same slot → unequip current
-						if (x.equippingBlock?.equipmentSlotTypeHash === slotHash) {
+						if (x.equippingBlock?.equipmentSlotTypeHash !== slotHash) {
+							return x;
+						}
+
+						// newly equipped
+						if (x.itemInstanceId === item.itemInstanceId) {
 							return {
 								...x,
-								equipped: x.itemInstanceId === item.itemInstanceId,
+								equipped: true,
+								location: 0,
+							};
+						}
+
+						// previously equipped
+						if (x.equipped) {
+							return {
+								...x,
+								equipped: false,
+								location: 1,
 							};
 						}
 
@@ -227,6 +269,86 @@ export default function Page() {
 			setSlots(previousSlots);
 
 			toast(`Failed to equip ${item.displayProperties.name}`, 'error');
+		} finally {
+			setTimeout(() => {
+				setTransferringItems((prev) => {
+					const next = new Set(prev);
+
+					next.delete(id);
+
+					return next;
+				});
+			}, 1500);
+		}
+	}
+
+	/* -------------------- TRANSFER ITEM -------------------- */
+
+	async function transferItem(item: any, toVault: boolean) {
+		try {
+			toast(`Transferring ${item.displayProperties.name}`, 'info');
+
+			const previousSlots = structuredClone(slots);
+
+			// optimistic update
+
+			setSlots((prev) => {
+				const next = structuredClone(prev);
+
+				for (const key of Object.keys(next)) {
+					next[key] = next[key].map((x: any) => {
+						if (x.itemInstanceId !== item.itemInstanceId) {
+							return x;
+						}
+
+						return {
+							...x,
+
+							location: toVault ? 2 : 1,
+
+							equipped: false,
+						};
+					});
+				}
+
+				return next;
+			});
+
+			const response = await fetch('/api/Destiny2/transfer', {
+				method: 'POST',
+
+				headers: {
+					'Content-Type': 'application/json',
+				},
+
+				body: JSON.stringify({
+					itemReferenceHash: item.itemHash,
+
+					stackSize: 1,
+
+					transferToVault: toVault,
+
+					itemId: item.itemInstanceId,
+
+					characterId: activeCharacterId,
+
+					membershipType: session.membershipType,
+
+					accessToken: session.accessToken,
+				}),
+			});
+
+			if (response.ok) toast(`Transfered ${item.displayProperties.name}`, 'success');
+
+			if (!response.ok) {
+				toast(`Failed to transfer ${item.displayProperties.name}`, 'error');
+
+				setSlots(previousSlots);
+
+				throw new Error('Failed to transfer item');
+			}
+		} catch (err) {
+			console.error(err);
 		}
 	}
 
@@ -372,6 +494,44 @@ export default function Page() {
 		return builds;
 	}, [slots, manifest, session]);
 
+	const [farmingBusy, setFarmingBusy] = useState(false);
+
+	useEffect(() => {
+		if (!farmingEnabled || farmingBusy) return;
+
+		const now = Date.now();
+
+		if (now - lastManualPull < 5000) {
+			return;
+		}
+
+		for (const slotKey of Object.keys(slotFreeSpace)) {
+			const reserve = slotFreeSpace[slotKey] - 1;
+
+			const slotItems = getSlot(slotKey);
+
+			const inventoryItems = slotItems.filter((x: any) => x.location === 1 && !x.equipped);
+
+			const free = 9 - inventoryItems.length;
+
+			if (free <= reserve) {
+				const itemToVault = inventoryItems[0];
+
+				if (!itemToVault) continue;
+
+				setFarmingBusy(true);
+
+				transferItem(itemToVault, true).finally(() => {
+					setTimeout(() => {
+						setFarmingBusy(false);
+					}, 1000);
+				});
+
+				break;
+			}
+		}
+	}, [slots, farmingEnabled, slotFreeSpace, farmingBusy]);
+
 	/* -------------------- LOADING -------------------- */
 
 	if (loading) {
@@ -388,13 +548,7 @@ export default function Page() {
 
 			<div className='fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_40%)] pointer-events-none' />
 
-			{/* Equip Overlay */}
-
-			{equippingItem && (
-				<div className='fixed inset-0 z-[200] pointer-events-none'>
-					<div className='absolute top-6 left-1/2 -translate-x-1/2 px-5 py-3 rounded-2xl border border-white/10 bg-black/60 backdrop-blur-2xl text-sm font-semibold'>Equipping Item...</div>
-				</div>
-			)}
+			<Toolbar farmingEnabled={farmingEnabled} setFarmingEnabled={setFarmingEnabled} />
 
 			<div className='relative grid grid-cols-[320px_1fr_320px] gap-12 px-10 py-10 min-h-screen'>
 				{/* LEFT SIDE */}
@@ -402,11 +556,71 @@ export default function Page() {
 				<div className='flex flex-col gap-6 z-10'>
 					<SubclassPanel subclasses={getSlot('subclass')} activeSubclass={subclass} builds={subclassBuilds} onEquip={equipItem} />
 
-					<Slot label='Kinetic' slotKey='kinetic' items={getSlot('kinetic')} reverse openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+					<Slot
+						label='Kinetic'
+						slotKey='kinetic'
+						items={getSlot('kinetic')}
+						reverse
+						openVault={openVault}
+						setOpenVault={setOpenVault}
+						vaultLoading={vaultLoading}
+						onEquip={equipItem}
+						onTransfer={transferItem}
+						freeSlots={slotFreeSpace.kinetic}
+						onManualPull={() => {
+							setLastManualPull(Date.now());
+						}}
+						setFreeSlots={(value) =>
+							setSlotFreeSpace((prev) => ({
+								...prev,
+								kinetic: value,
+							}))
+						}
+					/>
 
-					<Slot label='Energy' slotKey='energy' items={getSlot('energy')} reverse openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+					<Slot
+						label='Energy'
+						slotKey='energy'
+						items={getSlot('energy')}
+						reverse
+						openVault={openVault}
+						setOpenVault={setOpenVault}
+						vaultLoading={vaultLoading}
+						onEquip={equipItem}
+						onTransfer={transferItem}
+						freeSlots={slotFreeSpace.energy}
+						onManualPull={() => {
+							setLastManualPull(Date.now());
+						}}
+						setFreeSlots={(value) =>
+							setSlotFreeSpace((prev) => ({
+								...prev,
+								energy: value,
+							}))
+						}
+					/>
 
-					<Slot label='Power' slotKey='power' items={getSlot('power')} reverse openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+					<Slot
+						label='Power'
+						slotKey='power'
+						items={getSlot('power')}
+						reverse
+						openVault={openVault}
+						setOpenVault={setOpenVault}
+						vaultLoading={vaultLoading}
+						onEquip={equipItem}
+						onTransfer={transferItem}
+						freeSlots={slotFreeSpace.power}
+						onManualPull={() => {
+							setLastManualPull(Date.now());
+						}}
+						setFreeSlots={(value) =>
+							setSlotFreeSpace((prev) => ({
+								...prev,
+								power: value,
+							}))
+						}
+					/>
 				</div>
 
 				{/* CENTER */}
@@ -429,15 +643,110 @@ export default function Page() {
 					{/* Armor */}
 
 					<div className='flex flex-col gap-6 shrink-0'>
-						<Slot label='Helmet' slotKey='helmet' items={getSlot('helmet')} openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+						<Slot
+							label='Helmet'
+							slotKey='helmet'
+							items={getSlot('helmet')}
+							openVault={openVault}
+							setOpenVault={setOpenVault}
+							vaultLoading={vaultLoading}
+							onEquip={equipItem}
+							onTransfer={transferItem}
+							freeSlots={slotFreeSpace.helmet}
+							onManualPull={() => {
+								setLastManualPull(Date.now());
+							}}
+							setFreeSlots={(value) =>
+								setSlotFreeSpace((prev) => ({
+									...prev,
+									helmet: value,
+								}))
+							}
+						/>
 
-						<Slot label='Gauntlets' slotKey='gauntlets' items={getSlot('gauntlets')} openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+						<Slot
+							label='Gauntlets'
+							slotKey='gauntlets'
+							items={getSlot('gauntlets')}
+							openVault={openVault}
+							setOpenVault={setOpenVault}
+							vaultLoading={vaultLoading}
+							onEquip={equipItem}
+							onTransfer={transferItem}
+							freeSlots={slotFreeSpace.gauntlets}
+							onManualPull={() => {
+								setLastManualPull(Date.now());
+							}}
+							setFreeSlots={(value) =>
+								setSlotFreeSpace((prev) => ({
+									...prev,
+									gauntlets: value,
+								}))
+							}
+						/>
 
-						<Slot label='Chest' slotKey='chest' items={getSlot('chest')} openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+						<Slot
+							label='Chest'
+							slotKey='chest'
+							items={getSlot('chest')}
+							openVault={openVault}
+							setOpenVault={setOpenVault}
+							vaultLoading={vaultLoading}
+							onEquip={equipItem}
+							onTransfer={transferItem}
+							freeSlots={slotFreeSpace.chest}
+							onManualPull={() => {
+								setLastManualPull(Date.now());
+							}}
+							setFreeSlots={(value) =>
+								setSlotFreeSpace((prev) => ({
+									...prev,
+									chest: value,
+								}))
+							}
+						/>
 
-						<Slot label='Legs' slotKey='legs' items={getSlot('legs')} openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+						<Slot
+							label='Legs'
+							slotKey='legs'
+							items={getSlot('legs')}
+							openVault={openVault}
+							setOpenVault={setOpenVault}
+							vaultLoading={vaultLoading}
+							onEquip={equipItem}
+							onTransfer={transferItem}
+							freeSlots={slotFreeSpace.legs}
+							onManualPull={() => {
+								setLastManualPull(Date.now());
+							}}
+							setFreeSlots={(value) =>
+								setSlotFreeSpace((prev) => ({
+									...prev,
+									legs: value,
+								}))
+							}
+						/>
 
-						<Slot label='Class Item' slotKey='classItem' items={getSlot('classItem')} openVault={openVault} setOpenVault={setOpenVault} vaultLoading={vaultLoading} onEquip={equipItem} />
+						<Slot
+							label='Class Item'
+							slotKey='classItem'
+							items={getSlot('classItem')}
+							openVault={openVault}
+							setOpenVault={setOpenVault}
+							vaultLoading={vaultLoading}
+							onEquip={equipItem}
+							onTransfer={transferItem}
+							freeSlots={slotFreeSpace.classItem}
+							onManualPull={() => {
+								setLastManualPull(Date.now());
+							}}
+							setFreeSlots={(value) =>
+								setSlotFreeSpace((prev) => ({
+									...prev,
+									classItem: value,
+								}))
+							}
+						/>
 					</div>
 				</div>
 			</div>

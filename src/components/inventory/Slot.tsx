@@ -3,7 +3,7 @@
 'use client';
 
 import { DndContext, DragOverlay, PointerSensor, useDraggable, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import { CSS } from '@dnd-kit/utilities';
 import { motion } from 'framer-motion';
@@ -19,11 +19,18 @@ type Props = {
 
 	onEquip?: (item: any) => Promise<void>;
 
+	onTransfer?: (item: any, toVault: boolean) => Promise<void>;
+
+	onManualPull?: () => void;
+
 	openVault: string | null;
 
 	setOpenVault: React.Dispatch<React.SetStateAction<string | null>>;
 
 	vaultLoading: boolean;
+	freeSlots: number;
+
+	setFreeSlots: (value: number) => void;
 };
 
 function DraggableItem({ item, rarityClass, size = 'small' }: { item: any; rarityClass: string; size?: 'small' | 'large' }) {
@@ -84,14 +91,25 @@ function Slot({
 	reverse = false,
 
 	onEquip,
+	onTransfer,
+	onManualPull,
 
 	openVault,
 	setOpenVault,
 
 	vaultLoading,
+
+	freeSlots,
+	setFreeSlots,
 }: Props) {
 	const [dragging, setDragging] = useState<any>(null);
 	const [optimisticEquipped, setOptimisticEquipped] = useState<any>(null);
+	const [optimisticItems, setOptimisticItems] = useState<any[] | null>(null);
+
+	useEffect(() => {
+		setOptimisticItems(null);
+		setOptimisticEquipped(null);
+	}, [items]);
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {
@@ -105,9 +123,11 @@ function Slot({
 
 	const equipped = optimisticEquipped || realEquipped;
 
-	const inventory = useMemo(() => items.filter((i) => i.location === 1 && !i.equipped), [items]);
+	const displayedItems = optimisticItems || items;
 
-	const vault = useMemo(() => items.filter((i) => i.location === 2), [items]);
+	const inventory = useMemo(() => displayedItems.filter((i) => i.location === 1 && !i.equipped), [displayedItems]);
+
+	const vault = useMemo(() => displayedItems.filter((i) => i.location === 2), [displayedItems]);
 
 	const toggleVault = () => {
 		setOpenVault((p) => (p === slotKey ? null : slotKey));
@@ -136,6 +156,72 @@ function Slot({
 		}
 	}
 
+	async function handleTransfer(item: any, toVault: boolean) {
+		if (!onTransfer) return;
+
+		if (!toVault) {
+			onManualPull?.();
+		}
+
+		const previous = displayedItems;
+
+		const next = displayedItems.map((x) => {
+			if (x.itemInstanceId !== item.itemInstanceId) {
+				return x;
+			}
+
+			return {
+				...x,
+				location: toVault ? 2 : 1,
+				equipped: false,
+			};
+		});
+
+		setOptimisticItems(next);
+
+		try {
+			await onTransfer(item, toVault);
+		} catch (err) {
+			console.error(err);
+
+			setOptimisticItems(previous);
+		}
+	}
+
+	function InventoryDropZone({ children }: { children: React.ReactNode }) {
+		const { setNodeRef, isOver } = useDroppable({
+			id: 'inventory-slot',
+		});
+
+		return (
+			<div
+				ref={setNodeRef}
+				className={`
+				transition-all duration-200 rounded-2xl
+				${isOver ? 'scale-[1.02] brightness-125' : ''}
+			`}>
+				{children}
+			</div>
+		);
+	}
+
+	function VaultDropZone({ children }: { children: React.ReactNode }) {
+		const { setNodeRef, isOver } = useDroppable({
+			id: 'vault-slot',
+		});
+
+		return (
+			<div
+				ref={setNodeRef}
+				className={`
+				h-full transition-all duration-200 rounded-3xl
+				${isOver ? 'brightness-125 scale-[1.01]' : ''}
+			`}>
+				{children}
+			</div>
+		);
+	}
+
 	return (
 		<DndContext
 			sensors={sensors}
@@ -143,8 +229,34 @@ function Slot({
 				setDragging(active.data.current);
 			}}
 			onDragEnd={async ({ active, over }) => {
-				if (over?.id === 'equip-slot') {
-					await handleEquip(active.data.current);
+				if (!over) {
+					setDragging(null);
+					return;
+				}
+
+				const item = active.data.current;
+
+				try {
+					// equip
+					if (over.id === 'equip-slot') {
+						await handleEquip(item);
+					}
+
+					// move to vault
+					else if (over.id === 'vault-slot') {
+						if (item?.location !== 2) {
+							await handleTransfer(item, true);
+						}
+					}
+
+					// move from vault → inventory
+					else if (over.id === 'inventory-slot') {
+						if (item?.location === 2) {
+							await handleTransfer(item, false);
+						}
+					}
+				} catch (err) {
+					console.error(err);
 				}
 
 				setDragging(null);
@@ -153,12 +265,57 @@ function Slot({
 				setDragging(null);
 			}}>
 			<div className='relative'>
-				<div className={`flex items-center justify-between mb-3 ${reverse ? 'flex-row-reverse' : ''}`}>
-					<div className='text-[10px] uppercase tracking-[0.25em] text-white/40'>{label}</div>
+				<div
+					className={`
+		flex items-center justify-between mb-4
+		${reverse ? 'flex-row-reverse' : ''}
+	`}>
+					<div className='flex flex-col'>
+						<div className='text-[10px] uppercase tracking-[0.3em] text-white/35'>Equipment Slot</div>
 
-					<button onClick={toggleVault} className='text-[10px] uppercase tracking-[0.2em] text-white/40 hover:text-white transition'>
-						Vault
-					</button>
+						<div className='text-sm font-semibold text-white/85 mt-1'>{label}</div>
+					</div>
+
+					<div className={`flex items-center gap-2 ${reverse ? 'flex-row-reverse' : ''}`}>
+						<div className='flex items-center gap-2 px-2 py-1 rounded-xl border border-white/10 bg-white/[0.03]'>
+							<div className='text-[9px] uppercase tracking-[0.2em] text-white/35 whitespace-nowrap'>Free</div>
+
+							<input
+								type='number'
+								min={0}
+								max={9}
+								value={freeSlots}
+								onChange={(e) => {
+									const value = Number(e.target.value);
+
+									setFreeSlots(Math.max(0, Math.min(9, value || 0)));
+								}}
+								className='
+					w-10 h-7 rounded-lg
+					bg-black/30 border border-white/10
+					text-center text-xs font-semibold text-white
+					outline-none
+					focus:border-white/25
+					transition
+				'
+							/>
+						</div>
+
+						<button
+							onClick={toggleVault}
+							className='
+				h-9 px-4 rounded-xl
+				border border-white/10
+				bg-white/[0.03]
+				text-[10px] uppercase tracking-[0.2em]
+				text-white/50
+				hover:text-white
+				hover:bg-white/[0.06]
+				transition
+			'>
+							Vault
+						</button>
+					</div>
 				</div>
 
 				<div className={`flex gap-4 items-start ${reverse ? 'flex-row-reverse' : ''}`}>
@@ -166,41 +323,32 @@ function Slot({
 
 					<div className='shrink-0'>
 						<EquippedDropZone>
-							<div
-								className={`relative w-20 h-20 rounded-2xl overflow-hidden border backdrop-blur-xl transition-all duration-200 ${rarityStyles[equipped?.inventory?.tierTypeName] || 'border-white/10 bg-white/5'}`}>
-								{equipped?.displayProperties?.icon ? (
-									<img draggable={false} src={`https://www.bungie.net${equipped.displayProperties.icon}`} className='w-full h-full object-cover pointer-events-none' />
-								) : (
-									<div className='w-full h-full bg-white/5' />
-								)}
-
-								<div className='absolute inset-x-0 bottom-0 bg-black/70 backdrop-blur-sm px-2 py-1'>
-									<div className='text-[10px] font-semibold truncate'>{equipped?.displayProperties?.name || 'Empty'}</div>
-								</div>
-							</div>
+							<DraggableItem item={equipped} size='large' rarityClass={rarityStyles[equipped?.inventory?.tierTypeName] || 'border-white/10 bg-white/5'} />
 						</EquippedDropZone>
 					</div>
 
 					{/* Inventory */}
 
-					<div className='grid grid-cols-3 gap-2'>
-						{Array.from({ length: 9 }).map((_, i) => {
-							const item = inventory[i];
+					<InventoryDropZone>
+						<div className='grid grid-cols-3 gap-2'>
+							{Array.from({ length: 9 }).map((_, i) => {
+								const item = inventory[i];
 
-							if (!item) {
-								return <div key={i} className='w-16 h-16 rounded-xl border border-white/10 bg-black/30' />;
-							}
+								if (!item) {
+									return <div key={i} className='w-16 h-16 rounded-xl border border-white/10 bg-black/30' />;
+								}
 
-							return <DraggableItem key={item.itemInstanceId ?? item.itemHash} item={item} rarityClass={rarityStyles[item?.inventory?.tierTypeName] || 'border-white/10 bg-black/30'} />;
-						})}
-					</div>
+								return <DraggableItem key={item.itemInstanceId ?? item.itemHash} item={item} rarityClass={rarityStyles[item?.inventory?.tierTypeName] || 'border-white/10 bg-black/30'} />;
+							})}
+						</div>
+					</InventoryDropZone>
 				</div>
 
 				{/* Vault Drawer */}
 
 				{openVault === slotKey && (
 					<>
-						<div className='fixed inset-0 bg-black/70 backdrop-blur-sm z-40' onClick={() => setOpenVault(null)} />
+						<div onClick={() => setOpenVault(null)} className='fixed inset-0 z-40 bg-black/30 pointer-events-none' />
 
 						<div
 							className={`fixed top-6 bottom-6 z-50 rounded-[2rem] border border-white/10 bg-[#0f1115]/95 backdrop-blur-2xl p-6 overflow-hidden ${reverse ? 'right-6' : 'left-6'}`}
@@ -222,19 +370,21 @@ function Slot({
 							{vaultLoading ? (
 								<div className='opacity-70'>Loading...</div>
 							) : (
-								<div className='grid grid-cols-8 gap-3 overflow-y-auto h-[calc(100%-90px)] pr-2'>
-									{vault.map((item) => (
-										<div key={item.itemInstanceId ?? item.itemHash} className='group relative'>
-											<DraggableItem item={item} size='large' rarityClass={rarityStyles[item.inventory?.tierTypeName] || 'border-white/10 bg-black/30'} />
+								<VaultDropZone>
+									<div className='grid grid-cols-8 gap-3 overflow-y-auto h-[calc(100%-90px)] pr-2'>
+										{vault.map((item) => (
+											<div key={item.itemInstanceId ?? item.itemHash} className='group relative'>
+												<DraggableItem item={item} size='large' rarityClass={rarityStyles[item.inventory?.tierTypeName] || 'border-white/10 bg-black/30'} />
 
-											<div className='absolute inset-x-0 bottom-0 bg-black/80 p-2 opacity-0 group-hover:opacity-100 transition pointer-events-none'>
-												<div className='text-[11px] font-semibold leading-tight'>{item.displayProperties.name}</div>
+												<div className='absolute inset-x-0 bottom-0 bg-black/80 p-2 opacity-0 group-hover:opacity-100 transition pointer-events-none'>
+													<div className='text-[11px] font-semibold leading-tight'>{item.displayProperties.name}</div>
 
-												<div className='text-[10px] text-white/50 mt-1'>{item.itemTypeDisplayName}</div>
+													<div className='text-[10px] text-white/50 mt-1'>{item.itemTypeDisplayName}</div>
+												</div>
 											</div>
-										</div>
-									))}
-								</div>
+										))}
+									</div>
+								</VaultDropZone>
 							)}
 						</div>
 					</>

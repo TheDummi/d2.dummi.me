@@ -1,7 +1,27 @@
 /** @format */
 'use client';
 
-import { Activity, AlertTriangle, ChevronDown, Eye, Shield, ShieldOff, Swords, Timer, Trophy, Users } from 'lucide-react';
+import {
+	Activity,
+	AlertTriangle,
+	Bomb,
+	ChevronDown,
+	Eye,
+	Hand,
+	Package,
+	Radar,
+	RefreshCcw,
+	Shield,
+	ShieldOff,
+	SlidersHorizontal,
+	Sparkles,
+	Swords,
+	Timer,
+	Trophy,
+	User,
+	Users,
+	Zap,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -153,7 +173,7 @@ export default function Page() {
 				description: activity.displayProperties.description,
 				image: activity.pgcrImage,
 			}));
-	}, [definitions]);
+	}, [definitions.items, rules]);
 
 	useEffect(() => {
 		if (!maps.length || selectedMap) return;
@@ -216,12 +236,16 @@ export default function Page() {
 
 							<div className='relative'>
 								<select
-									name=''
-									id=''
-									onChange={(e) => setRules(rulesets[e.target.value])}
+									value={rulesKey}
+									onChange={(e) => {
+										const key = e.target.value;
+
+										setRulesKey(key);
+										setRules(rulesets[key]);
+									}}
 									className='appearance-none rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl px-5 py-3 pr-12 text-sm font-medium text-white outline-none transition hover:border-white/20 focus:border-blue-400/40 focus:ring-2 focus:ring-blue-400/10'>
 									{ruleSelector.map(({ value, name }) => (
-										<option key={value} value={value} className='bg-[#090909] text-white' selected={rulesKey == value}>
+										<option key={value} value={value} className='bg-[#090909] text-white'>
 											{name}
 										</option>
 									))}
@@ -233,7 +257,7 @@ export default function Page() {
 							</div>
 						</div>
 
-						<p className='text-white/50'>Competitive Destiny. These are unofficial scrim rules, this is how we like to play. (if old user data loads like the wrong character, fly in to tower.)</p>
+						<p className='text-white/50'>Custom Crucible Settings. Game Settings named Season [number], are unofficial scrim rules, other named game settings are just fun game modes.</p>
 					</div>
 				</div>
 
@@ -242,19 +266,49 @@ export default function Page() {
 
 					<div className='absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-red-500/10 pointer-events-none' />
 
-					<div className='relative grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 divide-y md:divide-y-0 md:divide-x divide-white/5'>
-						<Info icon={<Users className='w-5 h-5' />} label='Match' value={`${alpha.length}v${bravo.length}`} accent='blue' />
+					{rules && (
+						<div className='relative grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 divide-y md:divide-y-0 md:divide-x divide-white/5'>
+							<Info icon={<Users className='w-5 h-5' />} label='Match' value={`${alpha.length}v${bravo.length}`} accent='blue' />
 
-						<Info icon={<Swords className='w-5 h-5' />} label='Mode' value='Clash' accent='red' />
+							<Info icon={<Swords className='w-5 h-5' />} label='Type' value={rules.gameSettings.type ?? 'Unknown'} accent='red' />
 
-						<Info icon={<ShieldOff className='w-5 h-5' />} label='Power Ammo' value='Disabled' accent='yellow' />
+							<Info icon={<Timer className='w-5 h-5' />} label='Time' value={rules.gameSettings.time ?? 'Unknown'} accent='blue' />
 
-						<Info icon={<Timer className='w-5 h-5' />} label='Time' value='15 Minutes' accent='blue' />
+							<Info
+								icon={<Trophy className='w-5 h-5' />}
+								label='Score'
+								value={fireteam.length >= 8 ? (rules.gameSettings.score?.[4] ?? 'N/A') : (rules.gameSettings.score?.[3] ?? 'N/A')}
+								accent='yellow'
+							/>
 
-						<Info icon={<Activity className='w-5 h-5' />} label='Respawn' value='7 Seconds' accent='red' />
+							<Info icon={<Activity className='w-5 h-5' />} label='Respawn' value={rules.gameSettings.respawn ?? 'Unknown'} accent='red' />
 
-						<Info icon={<Trophy className='w-5 h-5' />} label='Score' value={fireteam.length >= 8 ? '75' : '50'} accent='yellow' />
-					</div>
+							<Info icon={<RefreshCcw className='w-5 h-5' />} label='Resurrection' value={rules.gameSettings.resurrectuion ?? 'Unknown'} accent='blue' />
+
+							<Info icon={<Shield className='w-5 h-5' />} label='Overshield' value={rules.gameSettings.overshield ?? 'Unknown'} accent='yellow' />
+
+							<Info icon={<Radar className='w-5 h-5' />} label='Radar' value={rules.gameSettings.radar ?? 'Unknown'} accent='blue' />
+
+							<Info
+								icon={<Zap className='w-5 h-5' />}
+								label='Special'
+								value={rules.gameSettings.special ? `${rules.gameSettings.special.option} • ${rules.gameSettings.special.cooldown}` : 'Unknown'}
+								accent='yellow'
+							/>
+
+							<Info icon={<Package className='w-5 h-5' />} label='Heavy' value={rules.gameSettings.heavy ?? 'Unknown'} accent='red' />
+
+							<Info icon={<Bomb className='w-5 h-5' />} label='Grenade' value={rules.gameSettings.grenade ?? 'Unknown'} accent='yellow' />
+
+							<Info icon={<Hand className='w-5 h-5' />} label='Melee' value={rules.gameSettings.melee ?? 'Unknown'} accent='red' />
+
+							<Info icon={<User className='w-5 h-5' />} label='Class' value={rules.gameSettings.class ?? 'Unknown'} accent='blue' />
+
+							<Info icon={<Sparkles className='w-5 h-5' />} label='Super' value={rules.gameSettings.super ?? 'Unknown'} accent='yellow' />
+
+							<Info icon={<SlidersHorizontal className='w-5 h-5' />} label='Modifiers' value={rules.gameSettings.modifiers ?? 'None'} accent='red' />
+						</div>
+					)}
 				</div>
 
 				<AnimatePresence mode='wait'>
@@ -541,6 +595,8 @@ function parseGuardian(member: any, definitions: any) {
 
 	const characters = member.profile.characters.data;
 
+	console.log(characters);
+
 	const equipment = member.profile.characterEquipment.data;
 
 	const parsedCharacters = Object.entries(equipment).map(([characterId, data]: any) => {
@@ -630,6 +686,8 @@ function parseGuardian(member: any, definitions: any) {
 		return {
 			characterId,
 
+			dateLastPlayed: character.dateLastPlayed,
+
 			name: `${profile.bungieGlobalDisplayName}#${profile.bungieGlobalDisplayNameCode}`,
 
 			class: character.classType === 0 ? 'Titan' : character.classType === 1 ? 'Hunter' : 'Warlock',
@@ -662,7 +720,7 @@ function parseGuardian(member: any, definitions: any) {
 		};
 	});
 
-	return parsedCharacters[0];
+	return parsedCharacters.sort((a: any, b: any) => new Date(b.dateLastPlayed).getTime() - new Date(a.dateLastPlayed).getTime())[0];
 }
 
 function validatePlayer(player: any, matchSize: number, rules: any) {
@@ -752,7 +810,9 @@ function validatePlayer(player: any, matchSize: number, rules: any) {
 
 	// Abilities
 
-	for (const ability of player.subclassBuild.abilities || []) {
+	const abilities = [player.subclassBuild.super, player.subclassBuild.grenade, player.subclassBuild.melee, player.subclassBuild.classAbility].filter(Boolean);
+
+	for (const ability of abilities) {
 		if (rules.bannedGrenades.includes(ability.name)) {
 			violations.push(`${ability.name} grenade banned`);
 		}
@@ -1080,6 +1140,16 @@ function validateTeam(team: any[], rules: any) {
 
 function PlayerCard({ player, rules }: { player: any; rules: any }) {
 	const [open, setOpen] = useState(false);
+	const [subclassOpen, setSubclassOpen] = useState(false);
+
+	const statConfig = [
+		{ label: 'Health', key: 'health' },
+		{ label: 'Melee', key: 'melee' },
+		{ label: 'Grenade', key: 'grenade' },
+		{ label: 'Super', key: 'super' },
+		{ label: 'Weapons', key: 'weapons' },
+		{ label: 'Class', key: 'classAbility' },
+	];
 
 	return (
 		<motion.div
@@ -1142,17 +1212,11 @@ function PlayerCard({ player, rules }: { player: any; rules: any }) {
 						className='overflow-hidden'>
 						<div className='p-4'>
 							<div className='grid grid-cols-2 gap-3'>
-								<Stat label='Health' value={player.stats.health} rules={rules} />
+								{statConfig.map(({ label, key }) => {
+									const value = player.stats[key];
 
-								<Stat label='Melee' value={player.stats.melee} red={player.stats.melee > rules.maxStats.melee} rules={rules} />
-
-								<Stat label='Grenade' value={player.stats.grenade} red={player.stats.grenade > rules.maxStats.grenade} rules={rules} />
-
-								<Stat label='Super' value={player.stats.super} red={player.stats.super > rules.maxStats.super} rules={rules} />
-
-								<Stat label='Weapons' value={player.stats.weapons} red={player.stats.weapons > rules.maxStats.weapons} rules={rules} />
-
-								<Stat label='Class' value={player.stats.classAbility} rules={rules} />
+									return <Stat key={key} label={label} value={value} red={value > rules.maxStats[key]} rules={rules} />;
+								})}
 							</div>
 
 							<div className='mt-5 grid gap-3 text-sm'>
@@ -1161,80 +1225,123 @@ function PlayerCard({ player, rules }: { player: any; rules: any }) {
 								<div className='rounded-3xl border border-white/10 bg-white/[0.03] overflow-hidden'>
 									{/* Header */}
 
-									<div className='p-4 border-b border-white/5'>
-										<div className='text-[10px] uppercase tracking-[0.25em] text-white/35 mb-4'>Subclass</div>
+									<button onClick={() => setSubclassOpen((x) => !x)} className='w-full p-4 text-left hover:bg-white/[0.02] transition'>
+										<div className='flex items-center justify-between gap-4'>
+											<div className='flex items-center gap-4 min-w-0'>
+												<div className='relative w-16 h-16 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shrink-0'>
+													{player.subclass?.icon ? (
+														<img src={`https://bungie.net${player.subclass.icon}`} alt={player.subclass.name} className='w-full h-full object-cover' />
+													) : (
+														<div className='w-full h-full flex items-center justify-center text-xs text-white/30'>?</div>
+													)}
+												</div>
 
-										<div className='flex items-center gap-4'>
-											<div className='relative w-16 h-16 rounded-2xl overflow-hidden bg-white/5 border border-white/10 shrink-0'>
-												{player.subclass?.icon ? (
-													<img src={`https://bungie.net${player.subclass.icon}`} alt={player.subclass.name} className='w-full h-full object-cover' />
-												) : (
-													<div className='w-full h-full flex items-center justify-center text-xs text-white/30'>?</div>
-												)}
-											</div>
+												<div className='min-w-0'>
+													<div className='text-[10px] uppercase tracking-[0.25em] text-white/35 mb-1'>Subclass</div>
 
-											<div className='min-w-0'>
-												<div className='text-lg font-bold truncate'>{player.subclass?.name || 'Unknown'}</div>
+													<div className='text-lg font-bold truncate'>{player.subclass?.name || 'Unknown'}</div>
 
-												<div className='flex items-center gap-2 mt-1'>
-													<div className='px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-wider text-white/50'>{player.subclass?.damageType}</div>
+													<div className='flex items-center gap-2 mt-1'>
+														<div className='px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] uppercase tracking-wider text-white/50'>{player.subclass?.damageType}</div>
+
+														{player.subclassBuild?.super && (
+															<div className='flex items-center gap-1.5 rounded-full bg-black/20 border border-white/10 px-2 py-1 min-w-0'>
+																{player.subclassBuild.super.icon && <img src={`https://bungie.net${player.subclassBuild.super.icon}`} alt='' className='w-4 h-4 rounded-full shrink-0' />}
+
+																<span className='text-[10px] text-white/60 truncate'>{player.subclassBuild.super.name}</span>
+															</div>
+														)}
+													</div>
 												</div>
 											</div>
+
+											<motion.div
+												animate={{
+													rotate: subclassOpen ? 180 : 0,
+												}}
+												transition={{
+													duration: 0.2,
+												}}
+												className='shrink-0'>
+												<ChevronDown className='w-5 h-5 text-white/40' />
+											</motion.div>
 										</div>
-									</div>
+									</button>
 
-									{/* Build */}
+									{/* Dropdown */}
 
-									<div className='p-4'>
-										<div className='flex items-center justify-between mb-3'>
-											<div className='text-[10px] uppercase tracking-[0.25em] text-white/35'>Subclass Build</div>
+									<AnimatePresence initial={false}>
+										{subclassOpen && (
+											<motion.div
+												initial={{
+													height: 0,
+													opacity: 0,
+												}}
+												animate={{
+													height: 'auto',
+													opacity: 1,
+												}}
+												exit={{
+													height: 0,
+													opacity: 0,
+												}}
+												transition={{
+													duration: 0.25,
+												}}
+												className='overflow-hidden border-t border-white/5'>
+												<div className='p-4'>
+													<div className='flex items-center justify-between mb-3'>
+														<div className='text-[10px] uppercase tracking-[0.25em] text-white/35'>Equipped</div>
 
-											<div className='text-[10px] text-white/25'>
-												{
-													[
-														player.subclassBuild.super,
-														player.subclassBuild.grenade,
-														player.subclassBuild.melee,
-														player.subclassBuild.classAbility,
-														...(player.subclassBuild.aspects || []),
-														...(player.subclassBuild.fragments || []),
-													].filter(Boolean).length
-												}{' '}
-												Equipped
-											</div>
-										</div>
-
-										<div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
-											{[
-												player.subclassBuild.super,
-												player.subclassBuild.grenade,
-												player.subclassBuild.melee,
-												player.subclassBuild.classAbility,
-												...(player.subclassBuild.aspects || []),
-												...(player.subclassBuild.fragments || []),
-											]
-												.filter(Boolean)
-												.map((item: any) => (
-													<div
-														key={`${item.hash}-${item.name}`}
-														className='group flex items-center gap-3 rounded-2xl bg-black/20 border border-white/5 p-2.5 hover:border-white/10 hover:bg-white/[0.03] transition-all'>
-														<div className='relative w-11 h-11 rounded-xl overflow-hidden bg-white/5 shrink-0 border border-white/10'>
-															{item.icon ? (
-																<img src={`https://bungie.net${item.icon}`} alt={item.name} className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105' />
-															) : (
-																<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
-															)}
-														</div>
-
-														<div className='min-w-0 flex-1'>
-															<div className='text-sm font-semibold truncate'>{item.name}</div>
-
-															<div className='text-[10px] uppercase tracking-wider text-white/35 truncate'>{item.type}</div>
+														<div className='text-[10px] text-white/25'>
+															{
+																[
+																	player.subclassBuild.super,
+																	player.subclassBuild.grenade,
+																	player.subclassBuild.melee,
+																	player.subclassBuild.classAbility,
+																	...(player.subclassBuild.aspects || []),
+																	...(player.subclassBuild.fragments || []),
+																].filter(Boolean).length
+															}{' '}
+															Equipped
 														</div>
 													</div>
-												))}
-										</div>
-									</div>
+
+													<div className='grid grid-cols-1 sm:grid-cols-2 gap-2'>
+														{[
+															player.subclassBuild.super,
+															player.subclassBuild.grenade,
+															player.subclassBuild.melee,
+															player.subclassBuild.classAbility,
+															...(player.subclassBuild.aspects || []),
+															...(player.subclassBuild.fragments || []),
+														]
+															.filter(Boolean)
+															.map((item: any) => (
+																<div
+																	key={`${item.hash}-${item.name}`}
+																	className='group flex items-center gap-3 rounded-2xl bg-black/20 border border-white/5 p-2.5 hover:border-white/10 hover:bg-white/[0.03] transition-all'>
+																	<div className='relative w-11 h-11 rounded-xl overflow-hidden bg-white/5 shrink-0 border border-white/10'>
+																		{item.icon ? (
+																			<img src={`https://bungie.net${item.icon}`} alt={item.name} className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105' />
+																		) : (
+																			<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
+																		)}
+																	</div>
+
+																	<div className='min-w-0 flex-1'>
+																		<div className='text-sm font-semibold truncate'>{item.name}</div>
+
+																		<div className='text-[10px] uppercase tracking-wider text-white/35 truncate'>{item.type}</div>
+																	</div>
+																</div>
+															))}
+													</div>
+												</div>
+											</motion.div>
+										)}
+									</AnimatePresence>
 								</div>
 
 								{/* Exotic Armor */}
@@ -1319,8 +1426,8 @@ function PlayerCard({ player, rules }: { player: any; rules: any }) {
 
 function Stat({ label, value, red, rules }: { label: string; value: number; red?: boolean; rules: any }) {
 	const statKeyMap = {
-		Health: null,
-		Class: null,
+		Health: 'health',
+		Class: 'classAbility',
 		Melee: 'melee',
 		Grenade: 'grenade',
 		Super: 'super',
@@ -1329,7 +1436,9 @@ function Stat({ label, value, red, rules }: { label: string; value: number; red?
 
 	const statKey = statKeyMap[label as keyof typeof statKeyMap];
 
-	const maxAllowed = statKey ? (rules.maxStats as any)[statKey as any] : 200;
+	const maxAllowed = statKey ? rules.maxStats?.[statKey] : undefined;
+
+	const hasLimit = typeof maxAllowed === 'number' && maxAllowed > 0;
 
 	return (
 		<div className='rounded-2xl bg-white/[0.04] border border-white/5 p-3'>
@@ -1338,16 +1447,16 @@ function Stat({ label, value, red, rules }: { label: string; value: number; red?
 			<div className={`text-lg font-black transition-colors ${red ? 'text-red-400' : 'text-white'}`}>{value}</div>
 
 			<div className='relative mt-2 h-1.5 rounded-full bg-white/5 overflow-visible'>
-				{/* Max marker */}
+				{/* Restriction Marker */}
 
-				{statKey && (
+				{hasLimit && (
 					<>
 						<div
 							className='absolute top-1/2 -translate-y-1/2 z-10'
 							style={{
 								left: `${(maxAllowed / 200) * 100}%`,
 							}}>
-							<div className='w-[2px] h-4 bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.8)] rounded-full' />
+							<div className='w-[2px] h-4 bg-red-400 rounded-full shadow-[0_0_10px_rgba(248,113,113,0.8)]' />
 						</div>
 
 						<div
@@ -1400,6 +1509,11 @@ function BanList({ definitions, rules }: { definitions: any; rules: any }) {
 	const [search, setSearch] = useState('');
 
 	const bannedItems = [
+		...rules.bannedTypes.map((name: any) => ({
+			type: 'Archetype',
+			name,
+		})),
+
 		...rules.bannedWeapons.map((name: any) => ({
 			type: 'Weapon',
 			name,
@@ -1489,20 +1603,24 @@ function BanList({ definitions, rules }: { definitions: any; rules: any }) {
 					);
 				}
 
+				if (item.type === 'Archetype') {
+					return false;
+				}
+
 				return true;
 			}) as any;
 
 			return {
 				...item,
 
-				icon: def?.displayProperties?.icon,
+				icon: def?.displayProperties?.icon ?? null,
 
 				tier: def?.inventory?.tierTypeName,
 			};
 		});
 
 		return Array.from(new Map(mapped.map((item) => [`${item.type}:${item.name}`, item])).values());
-	}, [definitions]);
+	}, [definitions.items, rules]);
 
 	const filtered = resolved.filter((x) => `${x.name} ${x.type}`.toLowerCase().includes(search.toLowerCase()));
 
@@ -1605,7 +1723,9 @@ function BanList({ definitions, rules }: { definitions: any; rules: any }) {
 												{item.icon ? (
 													<img src={`https://bungie.net${item.icon}`} alt='' className='w-full h-full object-cover' />
 												) : (
-													<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>?</div>
+													<div className='w-full h-full flex items-center justify-center text-[10px] text-white/30'>
+														<ShieldOff className='w-5 h-5' />
+													</div>
 												)}
 											</div>
 

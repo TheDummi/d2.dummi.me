@@ -25,6 +25,7 @@ export default function Page() {
 	const [manifest, setManifest] = useState<any>({});
 
 	const [farmingEnabled, setFarmingEnabled] = useState(false);
+	const [cleanCharacter, setCleanCharacter] = useState(false);
 	const [transferringItems, setTransferringItems] = useState<Set<string>>(new Set());
 	const [lastManualPull, setLastManualPull] = useState<number>(0);
 
@@ -497,7 +498,7 @@ export default function Page() {
 	const [farmingBusy, setFarmingBusy] = useState(false);
 
 	useEffect(() => {
-		if (!farmingEnabled || farmingBusy) return;
+		if (!cleanCharacter && (!farmingEnabled || farmingBusy)) return;
 
 		const now = Date.now();
 
@@ -506,7 +507,7 @@ export default function Page() {
 		}
 
 		for (const slotKey of Object.keys(slotFreeSpace)) {
-			const reserve = slotFreeSpace[slotKey] - 1;
+			const reserve = cleanCharacter ? 9 : slotFreeSpace[slotKey] - 1;
 
 			const slotItems = getSlot(slotKey);
 
@@ -530,7 +531,7 @@ export default function Page() {
 				break;
 			}
 		}
-	}, [slots, farmingEnabled, slotFreeSpace, farmingBusy]);
+	}, [slots, farmingEnabled, slotFreeSpace, farmingBusy, cleanCharacter]);
 
 	/* -------------------- LOADING -------------------- */
 
@@ -548,7 +549,7 @@ export default function Page() {
 
 			<div className='fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_40%)] pointer-events-none' />
 
-			<Toolbar farmingEnabled={farmingEnabled} setFarmingEnabled={setFarmingEnabled} />
+			<Toolbar farmingEnabled={farmingEnabled} setFarmingEnabled={setFarmingEnabled} cleanCharacter={cleanCharacter} setCleanCharacter={setCleanCharacter} />
 
 			<div className='relative grid grid-cols-[320px_1fr_320px] gap-12 px-10 py-10 min-h-screen'>
 				{/* LEFT SIDE */}

@@ -12,8 +12,8 @@ const STAT_HASHES = {
 	health: 392767087,
 	melee: 4244567218,
 	grenade: 1735777505,
-	classAbility: 144602215,
-	super: 1943323491,
+	classAbility: 1943323491,
+	super: 144602215,
 	weapons: 2996146975,
 };
 
@@ -32,12 +32,12 @@ export default function CharacterStats({ character }: Props) {
 			value: character.stats[STAT_HASHES.grenade],
 		},
 		{
-			label: 'Class',
-			value: character.stats[STAT_HASHES.classAbility],
-		},
-		{
 			label: 'Super',
 			value: character.stats[STAT_HASHES.super],
+		},
+		{
+			label: 'Class',
+			value: character.stats[STAT_HASHES.classAbility],
 		},
 		{
 			label: 'Weapons',

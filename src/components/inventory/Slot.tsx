@@ -271,8 +271,6 @@ function Slot({
 		${reverse ? 'flex-row-reverse' : ''}
 	`}>
 					<div className='flex flex-col'>
-						<div className='text-[10px] uppercase tracking-[0.3em] text-white/35'>Equipment Slot</div>
-
 						<div className='text-sm font-semibold text-white/85 mt-1'>{label}</div>
 					</div>
 

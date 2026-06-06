@@ -57,6 +57,8 @@ export default function Page() {
 
 	const [openVault, setOpenVault] = useState<string | null>(null);
 	const [vaultLoading, setVaultLoading] = useState(false);
+	const [postmaster, setPostmaster] = useState<any[]>([]);
+	const [postmasterOpen, setPostmasterOpen] = useState(false);
 
 	const [plugSets, setPlugSets] = useState<any>({});
 	const [socketTypes, setSocketTypes] = useState<any>({});
@@ -127,6 +129,8 @@ export default function Page() {
 
 			const inventoryItems = [...session.profileInventory.data.items, ...session.characterInventories.data[activeCharacterId].items];
 
+			const postmasterItems = session.characterInventories.data[activeCharacterId].items.filter((x: any) => x.bucketHash === 215593132);
+
 			/* -------------------- INVENTORY + VAULT -------------------- */
 
 			for (const item of inventoryItems) {
@@ -144,6 +148,11 @@ export default function Page() {
 					equipped: false,
 				});
 			}
+
+			const nextPostmaster = postmasterItems.map((item: any) => ({
+				...item,
+				...inventoryManifest[item.itemHash],
+			}));
 
 			/* -------------------- EQUIPPED -------------------- */
 
@@ -168,6 +177,7 @@ export default function Page() {
 			}
 
 			setSlots(nextSlots);
+			setPostmaster(nextPostmaster);
 		} finally {
 			setLoading(false);
 		}
@@ -176,6 +186,26 @@ export default function Page() {
 	useEffect(() => {
 		loadInventory();
 	}, [loadInventory]);
+
+	async function collectPostmasterItem(item: any) {
+		try {
+			await transferItem(item, false);
+
+			await loadInventory();
+		} catch (error) {
+			toast((error as any).Message, 'error');
+		}
+	}
+
+	async function collectAllPostmaster() {
+		for (const item of postmaster) {
+			try {
+				await transferItem(item, false);
+			} catch {}
+		}
+
+		await loadInventory();
+	}
 
 	/* -------------------- EQUIP ITEM -------------------- */
 
@@ -304,9 +334,7 @@ export default function Page() {
 
 						return {
 							...x,
-
 							location: toVault ? 2 : 1,
-
 							equipped: false,
 						};
 					});
@@ -315,42 +343,60 @@ export default function Page() {
 				return next;
 			});
 
-			const response = await fetch('/api/Destiny2/transfer', {
-				method: 'POST',
+			const isPostmasterItem = item.bucketHash === 215593132;
 
+			const endpoint = isPostmasterItem && !toVault ? '/api/Destiny2/postmaster' : '/api/Destiny2/transfer';
+
+			const payload =
+				isPostmasterItem && !toVault
+					? {
+							itemReferenceHash: item.itemHash,
+							stackSize: item.quantity ?? 1,
+							itemId: item.itemInstanceId,
+							characterId: activeCharacterId,
+							membershipType: session.membershipType,
+							accessToken: session.accessToken,
+						}
+					: {
+							itemReferenceHash: item.itemHash,
+							stackSize: 1,
+							transferToVault: toVault,
+							itemId: item.itemInstanceId,
+							characterId: activeCharacterId,
+							membershipType: session.membershipType,
+							accessToken: session.accessToken,
+						};
+
+			console.log('TRANSFER', {
+				endpoint,
+				itemHash: item.itemHash,
+				itemInstanceId: item.itemInstanceId,
+				bucketHash: item.bucketHash,
+				toVault,
+			});
+
+			const response = await fetch(endpoint, {
+				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-
-				body: JSON.stringify({
-					itemReferenceHash: item.itemHash,
-
-					stackSize: 1,
-
-					transferToVault: toVault,
-
-					itemId: item.itemInstanceId,
-
-					characterId: activeCharacterId,
-
-					membershipType: session.membershipType,
-
-					accessToken: session.accessToken,
-				}),
+				body: JSON.stringify(payload),
 			});
 
-			if (response.ok) toast(`Transfered ${item.displayProperties.name}`, 'success');
-
 			if (!response.ok) {
-				toast(`Failed to transfer ${item.displayProperties.name}`, 'error');
+				const error = await response.json();
+
+				console.error('TRANSFER FAILED', error);
+
+				toast(`Failed to transfer ${item.displayProperties.name}\n${error.Message}`, 'error');
 
 				setSlots(previousSlots);
 
-				throw new Error('Failed to transfer item');
+				throw new Error(error);
 			}
-		} catch (err) {
-			console.error(err);
-		}
+
+			toast(`Transferred ${item.displayProperties.name}`, 'success');
+		} catch (err) {}
 	}
 
 	/* -------------------- HELPERS -------------------- */
@@ -751,6 +797,72 @@ export default function Page() {
 					</div>
 				</div>
 			</div>
+
+			{postmaster.length > 0 && (
+				<button
+					onClick={() => setPostmasterOpen(true)}
+					className='
+			fixed
+			bottom-8
+			left-1/2
+			-translate-x-1/2
+			z-50
+			group
+		'>
+					<div className='relative'>
+						<img src='icons/postmaster.svg' className='w-24 h-24 object-contain drop-shadow-lg transition group-hover:scale-110' />
+
+						<div
+							className='
+					absolute
+					-top-1
+					-right-1
+					min-w-[24px]
+					h-6
+					px-1
+					rounded-full
+					bg-orange-500
+					text-black
+					text-xs
+					font-black
+					grid
+					place-items-center
+				'>
+							{postmaster.length}
+						</div>
+					</div>
+				</button>
+			)}
+
+			{postmasterOpen && (
+				<div className='fixed inset-0 z-50 bg-black/70 flex items-center justify-center'>
+					<div className='bg-zinc-900 rounded-xl w-full max-w-4xl p-6'>
+						<div className='flex justify-between items-center mb-4'>
+							<h2 className='text-xl font-bold'>Postmaster</h2>
+
+							<div className='flex gap-2'>
+								<button onClick={collectAllPostmaster} className='px-4 py-2 rounded bg-green-600'>
+									Collect All
+								</button>
+
+								<button onClick={() => setPostmasterOpen(false)} className='px-4 py-2 rounded bg-zinc-700'>
+									Close
+								</button>
+							</div>
+						</div>
+
+						<div className='grid grid-cols-6 gap-3'>
+							{postmaster.map((item, i) => (
+								<button key={item.itemInstanceId + i} onClick={() => collectPostmasterItem(item)} className='p-2 rounded bg-zinc-800 hover:bg-zinc-700'>
+									<img src={`https://www.bungie.net${item.displayProperties?.icon}`} alt='' className='w-12 h-12 mx-auto' />
+
+									<div className='text-xs mt-2'>{item.displayProperties?.name}</div>
+								</button>
+							))}
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
